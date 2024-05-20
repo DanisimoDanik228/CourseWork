@@ -1,0 +1,348 @@
+unit ShowAll;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, GlobalData, ConstData,
+  Vcl.StdCtrls, Vcl.ComCtrls, System.Generics.Collections;
+
+type
+  TForm5 = class(TForm)
+    PaintBox1: TPaintBox;
+    ListViewGarden: TListView;
+    Label1: TLabel;
+    Button1: TButton;
+    Panel1: TPanel;
+    Label2: TLabel;
+    ListViewCulture: TListView;
+    RichEdit1: TRichEdit;
+
+procedure PrintSelectedCulture(const nameCulture: string);
+    procedure CreateListViewGarden(list: PtGarden);
+    procedure PaintRect(const x, y: integer; const color: Tcolor;
+      const brush: Tcolor);
+    procedure PaintBox1Paint(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ListViewGardenClick(Sender: TObject);
+    procedure PrintSelectedGarden(const idGarden: integer);
+    procedure Button1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure CreateListViewCulture(const idGarden: array of integer);
+    procedure PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; x, y: integer);
+    procedure ListViewCultureClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    function FormShowAll: TModalResult;
+    { Public declarations }
+  end;
+
+var
+  Form5: TForm5;
+
+const
+  SizeRect = 20;
+  SizePen = 2;
+  // BrightenColor(öâåò,ïðîöåíò ÿðêîñòè) :TColor;
+
+implementation
+
+{$R *.dfm}
+
+
+procedure TForm5.PrintSelectedCulture(const nameCulture: string);
+function GetLighterColor(const Color: TColor): TColor;
+var
+  R, G, B: Byte;
+begin
+  R := GetRValue(Color);
+  G := GetGValue(Color);
+  B := GetBValue(Color);
+
+  R := R + 100;
+  G := G + 100;
+  B := B + 100;
+
+  Result := RGB(R, G, B);
+end;
+begin
+  PaintBox1.Canvas.brush.color := clBtnFace;
+//  PaintBox1.Canvas.FillRect(PaintBox1.ClientRect);
+
+  for var i := 0 to _GardenX do
+  begin
+    for var j := 0 to _GardenY do
+    begin
+      if GardenMas[i][j].Ñulture.Name = nameCulture then
+      begin
+      //(inttostr(GardenMas[i][j].CodGarden));
+        PaintRect(i, j,( IdentifyColor(GardenMas[i][j].CodGarden)), clsilver);
+      end;
+    end;
+  end;
+
+end;
+
+procedure TForm5.PrintSelectedGarden(const idGarden: integer);
+begin
+ // PaintBox1.Canvas.brush.color := clBtnFace;
+//  PaintBox1.Canvas.FillRect(PaintBox1.ClientRect);
+
+
+  for var i := 0 to _GardenX do
+  begin
+    for var j := 0 to _GardenY do
+    begin
+      PaintRect(i, j, IdentifyColor(GardenMas[i][j].CodGarden),clSilver);
+    end;
+  end;
+
+  for var i := 0 to _GardenX do
+  begin
+    for var j := 0 to _GardenY do
+    begin
+      if GardenMas[i][j].CodGarden = idGarden then
+      begin
+      PaintRect(i, j,clSilver, IdentifyColor(GardenMas[i][j].CodGarden));
+      end;
+    end;
+  end;
+
+end;
+
+procedure TForm5.Button1Click(Sender: TObject);
+
+var
+  MySet: array of integer;
+  function IsCodExist(const digits: integer): boolean;
+  begin
+    result := false;
+    for var item in MySet do
+    begin
+      if item = digits then
+      begin
+        result := true;
+        break;
+      end;
+    end;
+
+  end;
+
+begin
+
+  for var i := 0 to _GardenX do
+  begin
+    for var j := 0 to _GardenY do
+    begin
+
+      PaintRect(i, j,clSilver, IdentifyColor(GardenMas[i][j].CodGarden));
+      if not IsCodExist(GardenMas[i][j].CodGarden) then
+      begin
+        setLength(MySet, length(MySet) + 1);
+        MySet[length(MySet) - 1] := GardenMas[i][j].CodGarden;
+      end;
+    end;
+  end;
+
+  ListViewCulture.Clear;
+  CreateListViewCulture(MySet);
+end;
+
+procedure TForm5.CreateListViewCulture(const idGarden: array of integer);
+var
+  FrequensChars: TDictionary<string, integer>;
+  ListItem: TListItem;
+begin
+  RichEdit1.Clear;
+  FrequensChars := TDictionary<string, integer>.Create;
+  for var k := Low(idGarden) to High(idGarden) do
+  begin
+    for var i := 0 to _GardenX do
+    begin
+      for var j := 0 to _GardenY do
+      begin
+        if GardenMas[i][j].CodGarden = idGarden[k] then
+        begin
+          if FrequensChars.ContainsKey(GardenMas[i][j].Ñulture.Name) then
+          begin
+            FrequensChars[GardenMas[i][j].Ñulture.Name] :=
+              FrequensChars[GardenMas[i][j].Ñulture.Name] + 1;
+          end
+          else
+          begin
+            FrequensChars.Add(GardenMas[i][j].Ñulture.Name, 1);
+          end;
+          // ListItem := ListViewCulture.Items.Add;
+          // ListItem.Caption := GardenMas[i][j].Ñulture.Name;
+        end;
+
+        // PaintRect(i, j, IdentifyColor(GardenMas[i][j].CodGarden), clSilver);
+      end;
+    end
+  end;
+  for var item in FrequensChars.Keys do
+  begin
+
+    ListItem := ListViewCulture.Items.Add;
+    ListItem.Caption := item ;//+ '  x' + inttostr(FrequensChars[item]);
+    ListItem.SubItems.Add(inttostr(FrequensChars[item]));
+    //RichEdit1.Lines.Add(item + '  x' + inttostr(FrequensChars[item]));
+  end;
+
+end;
+
+procedure TForm5.CreateListViewGarden(list: PtGarden);
+var
+  ListItem: TListItem;
+  strColor: string;
+begin
+  ListViewGarden.Clear;
+
+  list := list.Next;
+  while list <> nil do
+  begin
+    ListItem := ListViewGarden.Items.Add;
+    ListItem.Caption := list.garden.Name;
+    strColor := ColorToString(IdentifyColor(list.garden.CodGarden));
+    ListItem.SubItems.Add(Copy(strColor, 3, length(strColor)));
+
+    list := list.Next;
+  end;
+
+end;
+
+procedure TForm5.FormCreate(Sender: TObject);
+var
+  Column: TListColumn;
+  x: integer;
+begin
+
+  Column := ListViewGarden.Columns.Add;
+  Column.Caption := 'Ãðÿäêà';
+  Column := ListViewGarden.Columns.Add;
+  Column.Caption := 'Öâåò';
+  ListViewGarden.Columns[0].Width := 150;
+  ListViewGarden.Columns[1].Width := 150;
+
+  Column := ListViewCulture.Columns.Add;
+  Column.Caption := 'Êóëüòóðà';
+  Column := ListViewCulture.Columns.Add;
+  Column.Caption := 'Êîë-âî';
+  ListViewCulture.Columns[0].Width := 80;
+  ListViewCulture.Columns[1].Width := 60;
+
+  Panel1.color := clCream;
+
+  PaintBox1.Width := _GardenX *( SizeRect + sizepen);
+  PaintBox1.Height := _GardenY *( SizeRect + sizepen);
+
+  Panel1.Width := PaintBox1.Width + 2 * 7;
+  Panel1.Height := PaintBox1.Height + 2 * 7;
+
+  // Panel1.Left := ClientWidth - Panel1.Width;
+  // Panel1.Top := 0;
+
+  PaintBox1.Left := 7;
+  PaintBox1.Top := 7;
+
+
+end;
+
+procedure TForm5.FormShow(Sender: TObject);
+begin
+  ListViewCulture.Clear;
+  ListViewGarden.Clear;
+
+  CreateListViewGarden(Gardenlist);
+end;
+
+function TForm5.FormShowAll: TModalResult;
+begin
+  result := ShowModal;
+end;
+
+procedure TForm5.ListViewCultureClick(Sender: TObject);
+var
+  SelectedItem: TListItem;
+begin
+//  SelectedItem := ListViewCulture.Selected;
+//  if SelectedItem <> nil then
+//  begin
+//    if Assigned(SelectedItem) then
+//    begin
+//      PrintSelectedCulture(SelectedItem.Caption);
+//    end;
+//  end;
+end;
+
+procedure TForm5.ListViewGardenClick(Sender: TObject);
+var
+  SelectedItem: TListItem;
+begin
+  SelectedItem := ListViewGarden.Selected;
+  if SelectedItem <> nil then
+  begin
+    if Assigned(SelectedItem) then
+    begin
+      PrintSelectedGarden(getIdGarden(SelectedItem.Caption));
+    end;
+
+    ListViewCulture.Clear;
+    CreateListViewCulture(getIdGarden(SelectedItem.Caption));
+  end;
+end;
+
+procedure TForm5.PaintRect(const x, y: integer; const color: Tcolor;
+  const brush: Tcolor);
+var
+  tempColor: Tcolor;
+  tempBrush: Tcolor;
+
+  Rect: TRect;
+begin
+  tempBrush := PaintBox1.Canvas.brush.color;
+  tempColor := PaintBox1.Canvas.Pen.color;
+
+  PaintBox1.Canvas.brush.color := brush;
+  PaintBox1.Canvas.Pen.color := color;
+ // PaintBox1.Canvas.brush.color := color;
+
+  Rect.Create(x * SizeRect + SizePen, y * SizeRect + SizePen,
+    (x + 1) * SizeRect, (y + 1) * SizeRect);
+  PaintBox1.Canvas.Rectangle(Rect);
+
+  PaintBox1.Canvas.brush.color := tempBrush;
+  PaintBox1.Canvas.Pen.color := tempColor;
+end;
+
+procedure TForm5.PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; x, y: integer);
+var
+  idGarden: integer;
+begin
+  idGarden := GardenMas[x div SizeRect][y div SizeRect].CodGarden;
+
+  PrintSelectedGarden(idGarden);
+  ListViewCulture.Clear;
+
+  CreateListViewCulture(idGarden);
+end;
+
+procedure TForm5.PaintBox1Paint(Sender: TObject);
+begin
+  PaintBox1.Canvas.brush.color := clBtnFace;
+  PaintBox1.Canvas.FillRect(PaintBox1.ClientRect);
+
+  for var i := 0 to _GardenX do
+  begin
+    for var j := 0 to _GardenY do
+    begin
+      PaintRect(i, j,clSilver, IdentifyColor(GardenMas[i][j].CodGarden));
+    end;
+  end;
+end;
+
+end.

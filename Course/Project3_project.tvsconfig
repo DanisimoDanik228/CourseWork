@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<TgConfig Version="3" SubLevelDisabled="False">
+  <Option Name="namespaceFolder.Form2Garden" Type="System.String" Value="Form2Garden" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.GlobalData" Type="System.String" Value="GlobalData" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.F2_Logical" Type="System.String" Value="F2_Logical" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.F1_Logical" Type="System.String" Value="F1_Logical" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.ConstData" Type="System.String" Value="ConstData" Category="General" IsBrowsable="False" />
+  <Option Name="namespaceFolder.Project3" Type="System.String" Value="Project3" Category="General" IsBrowsable="False" />
+</TgConfig>

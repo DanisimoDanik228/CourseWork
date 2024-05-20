@@ -1,0 +1,14 @@
+unit ConstData;
+
+interface
+
+const
+  FileMusic = 'music1.wav';
+  FileCulture = 'culture.cul';
+  FileGarden = 'garden.cul';
+  UserFileGarden = 'userGarden.garden';
+
+
+implementation
+
+end.

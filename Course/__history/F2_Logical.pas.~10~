@@ -1,0 +1,218 @@
+unit F2_Logical;
+
+interface
+
+uses
+  ConstData, GLOBALdATA, SysUtils, Vcl.Dialogs;
+
+function CreateDate(const AYear, AMonth, ADays: integer): TMyDate;
+procedure ReadFileCulture(list: Ptculture);
+procedure ReWriteFileGarden(list: PtGarden);
+function MadeStringDate(const date: TMyDate): string;
+procedure RewriteFileCulture(list: Ptculture);
+procedure ReadFileGarden(list: PtGarden);
+// ONLY FOR DEVELOPERS
+// {
+
+procedure _CreateFirstFileCulture;
+
+procedure _CreateFirstFileGarden;
+
+// }
+
+implementation
+
+function CreateDate(const AYear, AMonth, ADays: integer): TMyDate;
+begin
+  CreateDate.Year := AYear;
+  CreateDate.Month := AMonth;
+  CreateDate.Days := ADays;
+end;
+
+function MadeStringDate(const date: TMyDate): string;
+begin
+  MadeStringDate := Format('%.2d:%.2d:%.1d', [date.Days, date.Month,
+    date.Year]);
+end;
+
+procedure ReadFileCulture(list: Ptculture);
+var
+  currFile: file of cultureListInfo;
+
+  count: integer;
+begin
+  count := 0;
+  AssignFile(currFile, FileCulture);
+  Reset(currFile);
+  while not EoF(currFile) do
+  begin;
+    new(list^.Next);
+    list := list^.Next;
+    Read(currFile, list^.culture);
+    if count < list^.culture.cod then
+    begin
+      count := list^.culture.cod;
+    end;
+
+  end;
+  list^.Next := nil;
+
+  currMaxIdCulture := count;
+  Closefile(currFile);
+end;
+
+procedure Sav///////////////// dictionary
+
+procedure ReadFileGarden(list: PtGarden);
+var
+  currFile: file of TGarden;
+
+  count: integer;
+begin
+  count := 0;
+  AssignFile(currFile, FileGarden);
+  Reset(currFile);
+  while not EoF(currFile) do
+  begin
+    new(list^.Next);
+    list := list^.Next;
+    Read(currFile, list^.garden);
+    if count < list^.garden.CodGarden then
+    begin
+      count := list^.garden.CodGarden;
+    end;
+
+    dictionaryColorToId.Add();
+
+  end;
+  list^.Next := nil;
+  currMaxIdGarden := count;
+  Closefile(currFile);
+end;
+
+procedure _CreateFirstFileCulture;
+var
+  currFile: file of cultureListInfo;
+  Str: cultureListInfo;
+  countStr: integer;
+begin
+  countStr := 0;
+  AssignFile(currFile, FileCulture);
+  Reset(currFile);
+
+  seek(currFile, countStr);
+  Str.Name := 'Морковка';
+  Str.cod := 1;
+  Str.Time := CreateDate(1, 1, 1);
+  write(currFile, Str);
+  inc(countStr);
+
+  seek(currFile, countStr);
+  Str.Name := 'Картофель';
+  Str.cod := 2;
+  Str.Time := CreateDate(2, 2, 2);
+  write(currFile, Str);
+  inc(countStr);
+
+  seek(currFile, countStr);
+  Str.Name := 'Укроп';
+  Str.cod := 3;
+  Str.Time := CreateDate(3, 3, 3);
+  write(currFile, Str);
+  inc(countStr);
+
+  seek(currFile, countStr);
+  Str.Name := 'Малина';
+  Str.cod := 4;
+  Str.Time := CreateDate(4, 4, 4);
+  write(currFile, Str);
+  inc(countStr);
+
+  seek(currFile, countStr);
+  Str.Name := 'Яблоня';
+  Str.cod := 4;
+  Str.Time := CreateDate(5, 5, 5);
+  write(currFile, Str);
+  inc(countStr);
+
+  Closefile(currFile);
+end;
+
+procedure _CreateFirstFileGarden;
+var
+  currFile: file of TGarden;
+  Str: TGarden;
+  countStr: integer;
+begin
+  countStr := 0;
+  AssignFile(currFile, FileGarden);
+  Reset(currFile);
+
+  seek(currFile, countStr);
+  Str.Name := 'Первая';
+  Str.CodGarden := 1;
+  write(currFile, Str);
+  inc(countStr);
+
+  seek(currFile, countStr);
+  Str.Name := 'Вторая';
+  Str.CodGarden := 2;
+  write(currFile, Str);
+  inc(countStr);
+
+  seek(currFile, countStr);
+  Str.Name := 'Третья';
+  Str.CodGarden := 3;
+  write(currFile, Str);
+  inc(countStr);
+
+  seek(currFile, countStr);
+  Str.Name := 'Четвёртая';
+  Str.CodGarden := 4;
+  write(currFile, Str);
+  inc(countStr);
+
+  Closefile(currFile);
+end;
+
+procedure RewriteFileCulture(list: Ptculture);
+var
+  currFile: file of cultureListInfo;
+  count: integer;
+begin
+  AssignFile(currFile, FileCulture);
+  rewrite(currFile);
+
+  count := 0;
+  list := list.Next;
+  while (list <> nil) do
+  begin
+    seek(currFile, count);
+    write(currFile, list.culture);
+    inc(count);
+    list := list.Next;
+  end;
+  Closefile(currFile);
+end;
+
+procedure RewriteFileGarden(list: PtGarden);
+var
+  currFile: file of TGarden;
+  count: integer;
+begin
+  AssignFile(currFile, FileGarden);
+  rewrite(currFile);
+
+  count := 0;
+  list := list.Next;
+  while (list <> nil) do
+  begin
+    seek(currFile, count);
+    write(currFile, list.garden);
+    inc(count);
+    list := list.Next;
+  end;
+  Closefile(currFile);
+end;
+
+end.

@@ -1,0 +1,157 @@
+object Form2: TForm2
+  Left = 0
+  Top = 0
+  Caption = 'Info'
+  ClientHeight = 327
+  ClientWidth = 624
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  OnCreate = FormCreate
+  OnShow = FormShow
+  TextHeight = 15
+  object LabelCulture: TLabel
+    Left = 8
+    Top = 10
+    Width = 60
+    Height = 25
+    Caption = 'Culture:'
+    Color = clBackground
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+  end
+  object LabelTime: TLabel
+    Left = 8
+    Top = 55
+    Width = 111
+    Height = 25
+    Caption = 'Growing time:'
+    Color = clBackground
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+  end
+  object LabelBed: TLabel
+    Left = 8
+    Top = 100
+    Width = 97
+    Height = 25
+    Caption = 'Garden bed:'
+    Color = clBackground
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+  end
+  object ButtonSave: TButton
+    Left = 511
+    Top = 261
+    Width = 105
+    Height = 58
+    Cancel = True
+    Caption = 'SAVE'
+    DisabledImageName = 'ButtonName'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -25
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    OnClick = ButtonSaveClick
+  end
+  object EditCulture: TEdit
+    Left = 200
+    Top = 8
+    Width = 169
+    Height = 33
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = False
+    TabOrder = 1
+    TextHint = 'culture'
+  end
+  object EditTime: TEdit
+    Left = 200
+    Top = 55
+    Width = 169
+    Height = 33
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 2
+    TextHint = 'dd:mm:y'
+  end
+  object EditGarden: TEdit
+    Left = 200
+    Top = 100
+    Width = 169
+    Height = 33
+    BevelOuter = bvNone
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ImeName = 'EditBed'
+    ParentFont = False
+    TabOrder = 3
+    TextHint = 'garden'
+  end
+  object ButtonInfoCulture: TButton
+    Left = 375
+    Top = 8
+    Width = 33
+    Height = 33
+    Caption = 'i'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -25
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 4
+    OnClick = ButtonInfoCultureClick
+  end
+  object ButtonInfoBed: TButton
+    Left = 375
+    Top = 100
+    Width = 33
+    Height = 33
+    Caption = 'i'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -25
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 5
+    OnClick = ButtonInfoBedClick
+  end
+end

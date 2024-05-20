@@ -1,0 +1,27 @@
+program Project3;
+
+uses
+  Vcl.Forms,
+  Main in 'Main.pas' {Form1},
+  Form2Garden in 'Form2Garden.pas' {Form2},
+  GlobalData in 'GlobalData.pas',
+  ConstData in 'ConstData.pas',
+  F2_Logical in 'F2_Logical.pas',
+  F1_Logical in 'F1_Logical.pas',
+  AddNewCulture in 'AddNewCulture.pas' {Form3},
+  AddNewGarden in 'AddNewGarden.pas' {Form4},
+  ShowAll in 'ShowAll.pas' {Form5};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TForm4, Form4);
+  Application.CreateForm(TForm5, Form5);
+  Application.Run;
+
+end.

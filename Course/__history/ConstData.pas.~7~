@@ -1,0 +1,16 @@
+unit ConstData;
+
+interface
+
+const
+  FileMusic = 'music1.wav';
+  FileCulture = 'culture.cul';
+  FileGarden = 'garden.cul';
+  UserFileGarden = 'userGarden.garden';
+  FileJornalWorks = 'Journal.cul';
+
+  NameMainForm = 'Мой Сад';
+
+implementation
+
+end.

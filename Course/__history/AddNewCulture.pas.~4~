@@ -1,0 +1,82 @@
+unit AddNewCulture;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, ConstData, GLOBALdATA;
+
+type
+  TForm3 = class(TForm)
+    Label1: TLabel;
+    Label2: TLabel;
+    Button1: TButton;
+    EditName: TEdit;
+    Label3: TLabel;
+    Button2: TButton;
+    Label4: TLabel;
+    EditTime: TEdit;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form3: TForm3;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm3.Button1Click(Sender: TObject);
+begin
+  Close();
+end;
+
+procedure TForm3.Button2Click(Sender: TObject);
+  procedure addCulture(const cultureToAdd: culturelistinfo;
+    CultureList: PtCulture);
+  var
+    first: PtCulture;
+  begin
+    first := CultureList.Next;
+    new(CultureList.Next);
+
+    inc(currMaxIdCulture);
+    CultureList.Next.culture := cultureToAdd;
+    CultureList.Next.culture.cod := currMaxIdCulture;
+
+    CultureList.Next.Next := first;
+  end;
+
+var
+  strmessage: string;
+
+  cultureToAdd: culturelistinfo;
+begin
+
+  strmessage := '';
+
+  if not ConvertStringToDate(EditTime.Text, cultureToAdd.Time) then
+    strmessage := 'Invalid date';
+
+  if (StringReplace(EditName.Text, ' ', '', [rfReplaceAll]) = '') then
+    strmessage := strmessage + #13#10 + 'Invalid name';
+
+  if (strmessage = '') then
+  begin
+    cultureToAdd.Name := EditName.Text;
+    addCulture(cultureToAdd, CultureList);
+    Close();
+  end
+  else
+  begin
+    ShowMessage(strmessage);
+  end;
+end;
+
+end.

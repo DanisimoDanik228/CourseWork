@@ -1,0 +1,166 @@
+unit formochca2;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GlobalData, Vcl.StdCtrls, ConstData,
+  F2_Logical, Vcl.Menus;
+
+type
+  TForm2 = class(TForm)
+    LabelCulture: TLabel;
+    LabelTime: TLabel;
+    LabelBed: TLabel;
+    ButtonSave: TButton;
+    EditCulture: TEdit;
+    EditTime: TEdit;
+    EditGarden: TEdit;
+    LabelGarden: TLabel;
+    Label2: TLabel;
+    ListBoxCulture: TListBox;
+    ListBoxGarden: TListBox;
+    procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ButtonSaveClick(Sender: TObject);
+    procedure CreateListBoxGarden(list: PtGarden);
+    procedure CreateListBoxCulture(list: PtCulture);
+    procedure ListBoxCultureClick(Sender: TObject);
+    procedure ListBoxGardenClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Form2: TForm2;
+
+implementation
+
+{$R *.dfm}
+
+procedure TForm2.CreateListBoxCulture(list: PtCulture);
+begin
+  list := list.Next;
+  while list <> nil do
+  begin
+    ListBoxCulture.Items.Add(inttostr(list.culture.cod) + ')' +
+      list.culture.Name);
+    list := list.Next;
+  end;
+end;
+
+procedure TForm2.CreateListBoxGarden(list: PtGarden);
+begin
+  list := list.Next;
+  while list <> nil do
+  begin
+    ListBoxGarden.Items.Add(inttostr(list.garden.CodGarden) + ')' +
+      list.garden.Name);
+    list := list.Next;
+  end;
+end;
+
+procedure TForm2.ListBoxCultureClick(Sender: TObject);
+var
+  SelectedItem: string;
+begin
+  SelectedItem := ListBoxCulture.Items[ListBoxCulture.ItemIndex];
+  EditCulture.Text := Copy(SelectedItem, 3, Length(SelectedItem));
+end;
+
+procedure TForm2.ListBoxGardenClick(Sender: TObject);
+var
+  SelectedItem: string;
+begin
+  SelectedItem := ListBoxGarden.Items[ListBoxGarden.ItemIndex];
+  EditGarden.Text := Copy(SelectedItem, 3, Length(SelectedItem));
+end;
+
+procedure TForm2.ButtonSaveClick(Sender: TObject);
+var
+  culture: TGardenCell;
+  strNameGarden: string[50];
+  strNameCulture: string[50];
+  I: Integer;
+begin
+  strNameCulture := EditCulture.Text;
+  culture.Ñulture.Time := ConvertStringToDate(EditTime.Text);
+  strNameGarden := EditGarden.Text;
+
+  if not IsValidGarden(strNameGarden, culture.CodGarden) then
+  begin
+    ShowMessage('Invalid garden');
+  end;
+
+  if not IsValidCulture(strNameCulture, culture.Ñulture.cod) then
+  begin
+    ShowMessage('Invalid culture');
+  end;
+
+  ShowMessage(IdentifyCultureName(culture.Ñulture.cod) + ' | ' +
+    MadeStringDate(culture.Ñulture.Time) + ' | ' + culture.CodGarden.ToString()
+    + ' startPoint (' + StartPoint.X.ToString() + ',' + StartPoint.y.ToString()
+    + ')' + ' endPoint (' + point.X.ToString() + ',' +
+    point.y.ToString() + ')');
+
+  if ((point.X < StartPoint.X) and (point.y < StartPoint.y)) or
+    (StartPoint.X = -1) then
+  begin
+    GardenMas[GlobalData.point.X][GlobalData.point.y] := culture;
+  end
+  else
+  begin
+    ShowMessage('many garden');
+    for var K := StartPoint.X to point.X do
+      for var J := StartPoint.y to point.y do
+      begin
+        GardenMas[k][j] := culture;
+      end;
+
+  end;
+  GardenMas[GlobalData.point.X][GlobalData.point.y] := culture;
+  Close();
+  FLAG_UPGATE_GARDEN := True;
+end;
+
+procedure TForm2.FormCreate(Sender: TObject);
+begin
+  // **
+  new(GardenList);
+  // ReWriteFileGarden(GardenList);
+  ReadFileGarden(GardenList);
+  CreateListBoxGarden(GardenList);
+
+  new(CultureList);
+  // ReWriteFileCultire(CultureList);
+  ReadFileCulture(CultureList);
+  CreateListBoxCulture(CultureList);
+end;
+
+procedure TForm2.FormShow(Sender: TObject);
+begin
+
+  Caption := 'Garden ' + IdentifyGardenName(GardenMas[GlobalData.point.X]
+    [GlobalData.point.y].CodGarden);
+
+  if True then
+  begin
+    EditCulture.Text := IdentifyCultureName(GardenMas[GlobalData.point.X]
+      [GlobalData.point.y].Ñulture.cod);
+
+    EditTime.Text := ConvertDateToStringo(GardenMas[GlobalData.point.X]
+      [GlobalData.point.y].Ñulture.Time);
+
+    EditGarden.Text := IdentifyGardenName(GardenMas[GlobalData.point.X]
+      [GlobalData.point.y].CodGarden);
+  end;
+  // ShowMessage(inttostr(GardenMas[GlobalData.point.X]
+  // [GlobalData.point.Y].CodGarden) + ' | ' +inttostr( GardenMas[GlobalData.point.X]
+  // [GlobalData.point.Y].Ñulture.cod));
+
+end;
+
+end.
