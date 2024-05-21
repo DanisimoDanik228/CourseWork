@@ -11,7 +11,7 @@ uses
   Generics.Collections, GlobalData, ConstData, F1_Logical,
   System.ImageList, Vcl.ImgList, System.Actions, Vcl.ActnList, Vcl.Grids,
   Vcl.Menus, Vcl.ToolWin, Vcl.ComCtrls, AddNewCulture, AddNewGarden,
-  ShowALL;
+  ShowALL, MyDictionary;
 
 type
   TForm1 = class(TForm)
@@ -28,10 +28,6 @@ type
     ToolButton4: TToolButton;
     ActionPlus: TAction;
     ActionMinus: TAction;
-    N2: TMenuItem;
-    N4: TMenuItem;
-    N5: TMenuItem;
-    N7: TMenuItem;
     N8: TMenuItem;
     ActionShowAll: TAction;
     Label1: TLabel;
@@ -54,31 +50,34 @@ type
     procedure ActionSaveExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ActionShowAllExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
+    gardenlist: ptgarden;
+    culturelist: ptculture;
     IsLBM: boolean;
-    { Private declarations }
+
+    ScaleGarden: integer;
+
+    CurrPoint: TPoint;
+    StartPoint: TPoint;
+
+    StartPointPrintGarde: TPoint;
+
+    function NegativeColor(const color: Tcolor): Tcolor;
   public
-    { Public declarations }
   end;
 
 const
   PenSize = 2;
 
 var
-  CurrPoint: TPoint;
-  StartPoint: TPoint;
-
   Form1: TForm1;
-
-  ScaleGarden: integer;
-
-  StartPointPrintGarde: TPoint;
 
 implementation
 
 {$R *.dfm}
 
-function NegativeColor(const color: Tcolor): Tcolor;
+function TForm1.NegativeColor(const color: Tcolor): Tcolor;
 begin
   result := RGB(255 - GetRValue(color), 255 - GetGValue(color),
     255 - GetBValue(color));
@@ -198,16 +197,16 @@ begin
 
   SaveFileColor;
 
-  Form2.RewriteFileCulture;
+  saveFileGarden(gardenlist);
 
-  Form2.ReWriteFileGarden;
+  saveFileCulture(culturelist);
 
   MessageBox(Application.Handle, 'Сохранено успешно', 'Сохранение', MB_OK);
 end;
 
 procedure TForm1.ActionShowAllExecute(Sender: TObject);
 begin
-  Form5.FormShowAll;
+  Form5.FormShowAll(culturelist, gardenlist);
 end;
 
 procedure TForm1.ActionMinusExecute(Sender: TObject);
@@ -244,8 +243,12 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-
+var
+  strTemp: string;
 begin
+  new(gardenlist);
+  new(culturelist);
+
   Form1.Caption := NameMainForm;
 
   IsLBM := false;
@@ -264,21 +267,33 @@ begin
   PaintBox1.Width := _GardenX * (ScaleGarden + PenSize + 1);
   PaintBox1.Height := _GardenY * (ScaleGarden + PenSize + 1);
 
-  try
-    dictionaryColorToId := TDictionary<integer, Tcolor>.CREATE;
-    ReadFileColor;
-    ReadGardenMas;
-  except
-    showmessage('ex : readfile gardenMas or color');
-  end;
+  dictionaryColorToId := TMyDictionary<integer, Tcolor>.CREATE;
 
   if false then
   begin
-    StartData;
     _CreateFirstFileGarden;
     _CreateFirstFileCulture;
-    _CreateFirstFileColor
+    _CreateFirstFileColor;
+
+    readfileculture(culturelist);
+    _CreateFirstFileGardenMas(culturelist);
   end;
+
+  try
+    ReadFileColor;
+
+    readGardenMas;
+    readfileculture(culturelist);
+    readfilegarden(gardenlist);
+  except
+    showmessage('ex : readfile');
+  end;
+
+end;
+
+procedure TForm1.FormShow(Sender: TObject);
+begin
+  form2.createLists(culturelist, gardenlist);
 end;
 
 procedure TForm1.PaintBox1MouseLeave(Sender: TObject);
@@ -297,18 +312,16 @@ end;
 
 procedure TForm1.PaintBox1Click(Sender: TObject);
 begin
-  // ShowMessage(inttostr(StartPoint.x) + '|' + inttostr(StartPoint.y) + ' - ' +
-  // inttostr(CurrPoint.x) + '|' + inttostr(CurrPoint.y));
-
   if (abs(StartPoint.x - CurrPoint.x) <> 0) or
     (abs(StartPoint.y - CurrPoint.y) <> 0) then
   begin
     if (StartPoint.x <= CurrPoint.x) and (StartPoint.y <= CurrPoint.y) then
-      Form2Garden.Form2.FormShowForChangeCtrl(CurrPoint, StartPoint);
+      Form2Garden.form2.FormShowForChangeCtrl(CurrPoint, StartPoint,
+        culturelist, gardenlist);
   end
   else
   begin
-    Form2Garden.Form2.FormShowForChange(CurrPoint);
+    Form2Garden.form2.FormShowForChange(CurrPoint, culturelist, gardenlist);
   end;
 
   IsLBM := false;
@@ -358,7 +371,7 @@ begin
 
     newPoint.x := (x - StartPointPrintGarde.x) div (ScaleGarden);
     newPoint.y := (y - StartPointPrintGarde.y) div (ScaleGarden);
-    if (newPoint.X <> CurrPoint.X) or (newPoint.Y <> CurrPoint.Y) then
+    if (newPoint.x <> CurrPoint.x) or (newPoint.y <> CurrPoint.y) then
     begin
       if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
         if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then

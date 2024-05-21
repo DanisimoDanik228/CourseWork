@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, GlobalData, ConstData,
-  Vcl.StdCtrls, Vcl.ComCtrls, System.Generics.Collections;
+  Vcl.StdCtrls, Vcl.ComCtrls, mydictionary;
 
 type
   TForm5 = class(TForm)
@@ -37,9 +37,11 @@ type
     procedure ListViewCultureAllClick(Sender: TObject);
     procedure printAllGarden;
   private
-    { Private declarations }
+    culturelist: ptCulture;
+    gardenlist: PtGarden;
   public
-    function FormShowAll: TModalResult;
+    function FormShowAll(culturelist: ptCulture; gardenlist: PtGarden)
+      : TModalResult;
     { Public declarations }
   end;
 
@@ -55,6 +57,26 @@ implementation
 
 {$R *.dfm}
 
+procedure TForm5.CreateListViewGarden(list: PtGarden);
+var
+  listitem: tlistitem;
+  strColor: string;
+begin
+  ListViewGarden.Clear;
+
+  list := list.Next;
+  while list <> nil do
+  begin
+    listitem := ListViewGarden.Items.Add;
+    listitem.Caption := list.garden.Name;
+    strColor := ColorToString(IdentifyColor(list.garden.CodGarden));
+    listitem.SubItems.Add(Copy(strColor, 3, length(strColor)));
+
+    list := list.Next;
+  end;
+
+end;
+
 procedure TForm5.printAllGarden;
 begin
   PaintBox1.Canvas.brush.color := clBtnFace;
@@ -64,7 +86,7 @@ begin
   begin
     for var j := 0 to _GardenY do
     begin
-      PaintRect(i, j, clsilver, IdentifyColor(GardenMas[i][j].CodGarden));
+      PaintRect(i, j, clsilver, IdentifyColor(gardenmas[i][j].CodGarden));
     end;
   end;
 end;
@@ -96,15 +118,16 @@ begin
   begin
     for var j := 0 to _GardenY do
     begin
-      if GardenMas[i][j].Ñulture.Name = nameCulture then
+      if gardenmas[i][j].Ñulture.Name = nameCulture then
       begin
-        PaintBox1.Canvas.brush.color :=clsilver  ;
-        PaintBox1.Canvas.Pen.color := IdentifyColor(GardenMas[i][j].CodGarden);
-        Rect.Create(i * SizeRect + SizePen , j * SizeRect + SizePen,
-          (i) * SizeRect  + sizerect * 2 div 3, (j) * SizeRect  + sizerect * 2 div 3);
+        PaintBox1.Canvas.brush.color := clsilver;
+        PaintBox1.Canvas.Pen.color := IdentifyColor(gardenmas[i][j].CodGarden);
+        Rect.Create(i * SizeRect + SizePen, j * SizeRect + SizePen,
+          (i) * SizeRect + SizeRect * 2 div 3, (j) * SizeRect + SizeRect
+          * 2 div 3);
         PaintBox1.Canvas.Rectangle(Rect);
 
-       // PaintRect(i, j, IdentifyColor(GardenMas[i][j].CodGarden), clsilver);
+        // PaintRect(i, j, IdentifyColor(GardenMas[i][j].CodGarden), clsilver);
       end;
     end;
   end;
@@ -120,7 +143,7 @@ begin
   begin
     for var j := 0 to _GardenY do
     begin
-      PaintRect(i, j, IdentifyColor(GardenMas[i][j].CodGarden), clsilver);
+      PaintRect(i, j, IdentifyColor(gardenmas[i][j].CodGarden), clsilver);
     end;
   end;
 
@@ -128,9 +151,9 @@ begin
   begin
     for var j := 0 to _GardenY do
     begin
-      if GardenMas[i][j].CodGarden = idGarden then
+      if gardenmas[i][j].CodGarden = idGarden then
       begin
-        PaintRect(i, j, clsilver, IdentifyColor(GardenMas[i][j].CodGarden));
+        PaintRect(i, j, clsilver, IdentifyColor(gardenmas[i][j].CodGarden));
       end;
     end;
   end;
@@ -162,11 +185,11 @@ begin
     for var j := 0 to _GardenY do
     begin
 
-      PaintRect(i, j, clsilver, IdentifyColor(GardenMas[i][j].CodGarden));
-      if not IsCodExist(GardenMas[i][j].CodGarden) then
+      PaintRect(i, j, clsilver, IdentifyColor(gardenmas[i][j].CodGarden));
+      if not IsCodExist(gardenmas[i][j].CodGarden) then
       begin
         setLength(MySet, length(MySet) + 1);
-        MySet[length(MySet) - 1] := GardenMas[i][j].CodGarden;
+        MySet[length(MySet) - 1] := gardenmas[i][j].CodGarden;
       end;
     end;
   end;
@@ -176,27 +199,42 @@ begin
 end;
 
 procedure TForm5.CreateListViewCulture(const idGarden: array of integer);
+  function getNameCulture(const id: integer; list: ptCulture): string;
+  begin
+    list := list.Next;
+    while list <> nil do
+    begin
+      if list.culture.cod = id then
+      begin
+        Result := list.culture.Name;
+        exit;
+      end;
+      list := list.Next;
+    end;
+
+  end;
+
 var
-  FrequensChars: TDictionary<string, integer>;
+  FrequensChars: TMyDictionary<integer, integer>;
   listitem: tlistitem;
 begin
-  FrequensChars := TDictionary<string, integer>.Create;
+  FrequensChars := TMyDictionary<integer, integer>.Create;
   for var k := Low(idGarden) to High(idGarden) do
   begin
     for var i := 0 to _GardenX do
     begin
       for var j := 0 to _GardenY do
       begin
-        if GardenMas[i][j].CodGarden = idGarden[k] then
+        if gardenmas[i][j].CodGarden = idGarden[k] then
         begin
-          if FrequensChars.ContainsKey(GardenMas[i][j].Ñulture.Name) then
+          if FrequensChars.ContainsKey(gardenmas[i][j].Ñulture.cod) then
           begin
-            FrequensChars[GardenMas[i][j].Ñulture.Name] :=
-              FrequensChars[GardenMas[i][j].Ñulture.Name] + 1;
+            FrequensChars[gardenmas[i][j].Ñulture.cod] :=
+              FrequensChars[gardenmas[i][j].Ñulture.cod] + 1;
           end
           else
           begin
-            FrequensChars.Add(GardenMas[i][j].Ñulture.Name, 1);
+            FrequensChars.Add(gardenmas[i][j].Ñulture.cod, 1);
           end;
           // ListItem := ListViewCulture.Items.Add;
           // ListItem.Caption := GardenMas[i][j].Ñulture.Name;
@@ -206,33 +244,14 @@ begin
       end;
     end
   end;
-  for var item in FrequensChars.Keys do
+  for var item in FrequensChars.GetAllItems do
   begin
 
     listitem := ListViewCulture.Items.Add;
-    listitem.Caption := item; // + '  x' + inttostr(FrequensChars[item]);
-    listitem.SubItems.Add(inttostr(FrequensChars[item]));
+    listitem.Caption := getNameCulture(item.Key, culturelist);
+    // + '  x' + inttostr(FrequensChars[item]);
+    listitem.SubItems.Add(inttostr(item.Value));
     // RichEdit1.Lines.Add(item + '  x' + inttostr(FrequensChars[item]));
-  end;
-
-end;
-
-procedure TForm5.CreateListViewGarden(list: PtGarden);
-var
-  listitem: tlistitem;
-  strColor: string;
-begin
-  ListViewGarden.Clear;
-
-  list := list.Next;
-  while list <> nil do
-  begin
-    listitem := ListViewGarden.Items.Add;
-    listitem.Caption := list.garden.Name;
-    strColor := ColorToString(IdentifyColor(list.garden.CodGarden));
-    listitem.SubItems.Add(Copy(strColor, 3, length(strColor)));
-
-    list := list.Next;
   end;
 
 end;
@@ -282,16 +301,20 @@ begin
   ListViewCulture.Clear;
   ListViewGarden.Clear;
 
-  CreateListViewGarden(Gardenlist);
-  CreateListCultureAll(CultureList);
+  CreateListViewGarden(gardenlist);
+  CreateListCultureAll(culturelist);
 
   Button1.Click();
 end;
 
-function TForm5.FormShowAll: TModalResult;
+function TForm5.FormShowAll(culturelist: ptCulture; gardenlist: PtGarden)
+  : TModalResult;
 begin
+  Form5.culturelist := culturelist;
+  Form5.gardenlist := gardenlist;
+
   Result := ShowModal;
-  CreateListCultureAll(CultureList);
+  CreateListCultureAll(culturelist);
 end;
 
 procedure TForm5.ListViewCultureAllClick(Sender: TObject);
@@ -317,11 +340,11 @@ begin
   begin
     if Assigned(SelectedItem) then
     begin
-      PrintSelectedGarden(getIdGarden(SelectedItem.Caption));
+      PrintSelectedGarden(getIdGarden(SelectedItem.Caption, gardenlist));
     end;
 
     ListViewCulture.Clear;
-    CreateListViewCulture(getIdGarden(SelectedItem.Caption));
+    CreateListViewCulture(getIdGarden(SelectedItem.Caption, gardenlist));
   end;
 end;
 
@@ -342,7 +365,7 @@ procedure TForm5.PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
 var
   idGarden: integer;
 begin
-  idGarden := GardenMas[x div SizeRect][y div SizeRect].CodGarden;
+  idGarden := gardenmas[x div SizeRect][y div SizeRect].CodGarden;
 
   PrintSelectedGarden(idGarden);
   ListViewCulture.Clear;

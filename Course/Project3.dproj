@@ -124,6 +124,7 @@
             <Form>Form5</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="MyDictionary.pas"/>
         <None Include="ModelSupport_Project3\default.txaPackage"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

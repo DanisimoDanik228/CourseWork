@@ -7,7 +7,7 @@ uses
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, GlobalData, Vcl.StdCtrls, ConstData,
   F2_Logical, Vcl.Menus, Vcl.Grids, AddNewCulture, AddNewGarden, Vcl.ComCtrls,
-  System.Generics.Collections, System.Actions, Vcl.ActnList;
+  System.Actions, Vcl.ActnList, MyDictionary;
 
 type
   TForm2 = class(TForm)
@@ -33,7 +33,6 @@ type
     ActionAddGarden: TAction;
     ActionDeleteCulture: TAction;
     ActionDeleteGarden: TAction;
-    procedure FormCreate(Sender: TObject);
     procedure ButtonSaveClick(Sender: TObject);
     procedure ButtonCloseClick(Sender: TObject);
     procedure ListViewCultureClick(Sender: TObject);
@@ -49,13 +48,17 @@ type
   private
     CurrPoint: TPoint;
     StartPoint: TPoint;
+
+    culturelist: PtCulture;
+    gardenlist: PtGarden;
     { Private declarations }
   public
     { Public declarations }
-    procedure ReWriteFileGarden;
-    procedure RewriteFileCulture;
-    function FormShowForChange(CurrPoint: TPoint): TModalResult;
-    function FormShowForChangeCtrl(CurrPoint, StartPoint: TPoint): TModalResult;
+    function FormShowForChange(CurrPoint: TPoint; culturelist: PtCulture;
+      gardenlist: PtGarden): TModalResult;
+    function FormShowForChangeCtrl(CurrPoint, StartPoint: TPoint;
+      culturelist: PtCulture; gardenlist: PtGarden): TModalResult;
+    procedure createLists(culturelist: PtCulture; gardenlist: PtGarden);
   end;
 
 var
@@ -65,14 +68,10 @@ implementation
 
 {$R *.dfm}
 
-procedure TForm2.RewriteFileCulture;
+procedure TForm2.createLists(culturelist: PtCulture; gardenlist: PtGarden);
 begin
-  F2_Logical.RewriteFileCulture(culturelist);
-end;
-
-procedure TForm2.ReWriteFileGarden;
-begin
-  F2_Logical.ReWriteFileGarden(gardenlist);
+ Form2.culturelist := culturelist;
+ Form2.gardenlist := gardenlist;
 end;
 
 procedure TForm2.CreateListViewGarden(list: PtGarden);
@@ -121,32 +120,54 @@ begin
 end;
 
 procedure TForm2.ActionAddCultureExecute(Sender: TObject);
+procedure AddCulture(const newCulture: cultureListInfo; list: Ptculture);
+var
+  firstNode: Ptculture;
+begin
+  firstNode := list.Next;
+
+  new(list.Next);
+  list.Next.culture := newCulture;
+  list.Next.Next := firstNode;
+end;
+
 var
   Res: TModalResult;
   newculture: cultureListInfo;
 begin
-  Res := Form3.ShowForAdd(newculture);
+  Res := Form3.ShowForAdd(newculture, culturelist);
 
   if Res = mrnone then
     Exit;
 
-//  ShowMessage('add culture  result : ' + inttostr(ord(Res)));
+  // ShowMessage('add culture  result : ' + inttostr(ord(Res)));
   AddCulture(newculture, culturelist);
   CreateListViewCulture(culturelist);
 end;
 
 procedure TForm2.ActionAddGardenExecute(Sender: TObject);
+procedure AddGarden(const newgARDEN: TGarden; list: PtGarden);
+var
+  firstNode: PtGarden;
+begin
+    firstNode := list.Next;
+
+  new(list.Next);
+  list.Next.garden := newgARDEN;
+  list.Next.Next := firstNode;
+end;
+
 var
   Res: TModalResult;
   newgarden: TGARDEN;
 
 begin
-  Res := Form4.ShowForAdd(newgarden);
+  Res := Form4.ShowForAdd(newgarden, gardenlist);
 
   if Res = mrnone then
     Exit;
 
- // ShowMessage('add garden');
+  // ShowMessage('add garden');
 
   AddGarden(newgarden, gardenlist);
   CreateListViewGarden(gardenlist);
@@ -162,7 +183,7 @@ begin
     SelectedItem := ListViewCulture.Selected;
     if Assigned(SelectedItem) then
     begin
-      if CheckCultureUsing(SelectedItem.Caption) then
+      if CheckCultureUsing(SelectedItem.Caption, gardenmas) then
       begin
         MessageBox(Application.Handle,
           'Данная культура уже используется в хозяйтсве',
@@ -170,7 +191,7 @@ begin
       end
       else
       begin
-        DeleteCulture(SelectedItem.Caption);
+        DeleteCulture(SelectedItem.Caption, culturelist);
         CreateListViewCulture(culturelist);
       end;
     end;
@@ -193,7 +214,8 @@ begin
     SelectedItem := ListViewGarden.Selected;
     if Assigned(SelectedItem) then
     begin
-      if CheckGardenUsing(SelectedItem.Caption) then
+      if CheckGardenUsing(getidgarden(SelectedItem.Caption, gardenlist),
+        gardenmas) then
       begin
         MessageBox(Application.Handle,
           'Данная грядка уже используется в хозяйтсве',
@@ -201,7 +223,7 @@ begin
       end
       else
       begin
-        DeleteGarden(SelectedItem.Caption);
+        DeleteGarden(SelectedItem.Caption, gardenlist, dictionaryColorToId);
         CreateListViewGarden(gardenlist);
       end;
     end;
@@ -215,9 +237,9 @@ end;
 
 procedure TForm2.Button1Click(Sender: TObject);
 begin
-showmessage('currMaxIdGarden : '+ inttostr(currMaxIdGarden));
-  PrintCulture;
-  PrintGarden;
+//  ShowMessage('currMaxIdGarden : ' + inttostr(currMaxIdGarden));
+ // PrintCulture(culturelist);
+ // PrintGarden(dictionaryColorToId, gardenlist);
   // PrintDictionary;
 end;
 
@@ -227,11 +249,47 @@ begin
 end;
 
 procedure TForm2.ButtonSaveClick(Sender: TObject);
+function IsValidGarden(list: PtGarden; const str: string;
+  var cod: integer): boolean;
+begin
+  result := false;
+
+  list := list.Next;
+  while list <> nil do
+  begin
+    if list.garden.Name = str then
+    begin
+      result := true;
+      cod := list.garden.CodGarden;
+      break;
+    end;
+    list := list.Next;
+  end;
+end;
+function IsValidCulture(list: Ptculture; const str: string;
+  var cod: integer): boolean;
+begin
+  result := false;
+
+  list := list.Next;
+  while list <> nil do
+  begin
+    if list.culture.Name = str then
+    begin
+      result := true;
+      cod := list.culture.cod;
+      break;
+    end;
+    list := list.Next;
+  end;
+
+end;
+
 var
   culture: TGardenCell;
   strNameGarden: string[50];
   strNameCulture: string[50];
-  I: Integer;
+  I: integer;
   strMessage: string;
 begin
   strMessage := '';
@@ -254,7 +312,7 @@ begin
     for var K := StartPoint.X to CurrPoint.X do
       for var J := StartPoint.Y to CurrPoint.Y do
       begin
-        GardenMas[K][J] := culture;
+        gardenmas[K][J] := culture;
       end;
 
     Close();
@@ -267,27 +325,49 @@ begin
   end;
 end;
 
-
-
-procedure TForm2.FormCreate(Sender: TObject);
-begin
-  new(gardenlist);
-  //
-  ReadFileGarden(gardenlist);
-
-  new(culturelist);
-  //
-  ReadFileCulture(culturelist);
-end;
-
 procedure TForm2.FormShow(Sender: TObject);
 begin
-  CreateListViewGarden(gardenlist);
-  CreateListViewCulture(culturelist);
+  // CreateListViewGarden(gardenlist);
+  // CreateListViewCulture(culturelist);
 end;
 
-function TForm2.FormShowForChange(CurrPoint: TPoint): TModalResult;
+function TForm2.FormShowForChange(CurrPoint: TPoint; culturelist: PtCulture;
+  gardenlist: PtGarden): TModalResult;
+function IdentifyGardenName(list: PtGarden; const cod: integer): string;
 begin
+  list := list.Next;
+  while list <> nil do
+  begin
+    if list.garden.CodGarden = cod then
+    begin
+      result := list.garden.Name;
+      break;
+    end;
+    list := list.Next;
+  end;
+end;
+
+function IdentifyCultureName(list: Ptculture; const cod: integer): string;
+begin
+  list := list.Next;
+  while list <> nil do
+  begin
+    if list.culture.cod = cod then
+    begin
+      result := list.culture.Name;
+      break;
+    end;
+    list := list.Next;
+  end;
+end;
+
+begin
+  Form2.culturelist := culturelist;
+  Form2.gardenlist := gardenlist;
+
+  CreateListViewGarden(gardenlist);
+  CreateListViewCulture(culturelist);
+
   Form2.Caption := 'Изменение грядки';
 
   ButtonDeleteCulture.Enabled := ListViewCulture.Selected <> nil;
@@ -297,20 +377,25 @@ begin
   Form2.StartPoint := CurrPoint;
 
   EditCulture.Text := IdentifyCultureName(culturelist,
-    GardenMas[CurrPoint.X][CurrPoint.Y].Сulture.cod);
+    gardenmas[CurrPoint.X][CurrPoint.Y].Сulture.cod);
 
-  EditTime.Text := ConvertDateToString(GardenMas[CurrPoint.X][CurrPoint.Y]
+  EditTime.Text := ConvertDateToString(gardenmas[CurrPoint.X][CurrPoint.Y]
     .Сulture.Time);
 
   EditGarden.Text := IdentifyGardenName(gardenlist,
-    GardenMas[CurrPoint.X][CurrPoint.Y].CodGarden);
+    gardenmas[CurrPoint.X][CurrPoint.Y].CodGarden);
 
   Result := ShowModal;
 end;
 
-function TForm2.FormShowForChangeCtrl(CurrPoint, StartPoint: TPoint)
-  : TModalResult;
+function TForm2.FormShowForChangeCtrl(CurrPoint, StartPoint: TPoint;
+  culturelist: PtCulture; gardenlist: PtGarden): TModalResult;
 begin
+  Form2.culturelist := culturelist;
+  Form2.gardenlist := gardenlist;
+
+  CreateListViewGarden(gardenlist);
+  CreateListViewCulture(culturelist);
 
   Form2.Caption := 'Изменение грядок';
 

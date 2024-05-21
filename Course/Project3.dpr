@@ -10,7 +10,8 @@ uses
   F1_Logical in 'F1_Logical.pas',
   AddNewCulture in 'AddNewCulture.pas' {Form3},
   AddNewGarden in 'AddNewGarden.pas' {Form4},
-  ShowAll in 'ShowAll.pas' {Form5};
+  ShowAll in 'ShowAll.pas' {Form5},
+  MyDictionary in 'MyDictionary.pas';
 
 {$R *.res}
 

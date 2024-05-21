@@ -2,7 +2,6 @@ object Form1: TForm1
   Left = 500
   Top = 164
   Anchors = [akLeft, akTop, akRight, akBottom]
-  Caption = 'Programm'
   ClientHeight = 429
   ClientWidth = 737
   Color = clBtnFace
@@ -17,6 +16,7 @@ object Form1: TForm1
   Menu = MainMenu1
   Position = poDesigned
   OnCreate = FormCreate
+  OnShow = FormShow
   TextHeight = 25
   object PaintBox1: TPaintBox
     Left = 0
@@ -88,8 +88,9 @@ object Form1: TForm1
       Left = 79
       Top = 0
       Width = 8
-      ImageIndex = 19
-      Style = tbsSeparator
+      Caption = 'ToolButton5'
+      ImageIndex = 20
+      Style = tbsDivider
     end
     object ToolButton6: TToolButton
       Left = 87
@@ -110,20 +111,6 @@ object Form1: TForm1
     Top = 56
     object N1: TMenuItem
       Caption = #1044#1072#1095#1085#1099#1081' '#1091#1095#1072#1089#1090#1086#1082
-      object N2: TMenuItem
-        Action = Form2.ActionAddCulture
-        Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1085#1086#1074#1099#1081' '#1074#1080#1076' '#1082#1091#1083#1100#1090#1091#1088#1099
-      end
-      object N4: TMenuItem
-        Caption = '-'
-      end
-      object N5: TMenuItem
-        Action = Form2.ActionAddGarden
-        Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1085#1086#1074#1091#1102' '#1075#1088#1103#1076#1082#1091
-      end
-      object N7: TMenuItem
-        Caption = '-'
-      end
       object N8: TMenuItem
         Action = ActionShowAll
         Caption = #1055#1088#1086#1089#1084#1086#1090#1088' '#1057#1072#1076#1072

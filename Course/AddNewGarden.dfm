@@ -2,8 +2,8 @@ object Form4: TForm4
   Left = 920
   Top = 393
   BorderStyle = bsDialog
-  ClientHeight = 150
-  ClientWidth = 506
+  ClientHeight = 141
+  ClientWidth = 500
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText

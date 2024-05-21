@@ -3,15 +3,24 @@ unit F1_Logical;
 interface
 
 uses
-  globalData, constdata, Vcl.Graphics;
+  globalData, constdata, Vcl.Graphics, MyDictionary;
 
-procedure SaveFileColor;
-procedure SaveGardenMas;
-procedure StartData;
-procedure ReadGardenMas;
+procedure SaveFileGarden(list: PtGarden);
+procedure ReadFileGarden(list: PtGarden);
+// *
+procedure ReadFileCulture(list: Ptculture);
+procedure SaveFileCulture(list: Ptculture);
+// *
 procedure ReadFileColor;
+procedure SaveFileColor;
+// *
+procedure SaveGardenMas;
+procedure ReadGardenMas;
+// *
+
 // ONLY FOR DEVELOPERS
 // {
+procedure _CreateFirstFileGardenMas(culturelist: Ptculture);
 
 procedure _CreateFirstFileCulture;
 
@@ -22,6 +31,93 @@ procedure _CreateFirstFileColor;
 // }
 implementation
 
+procedure ReadFileCulture(list: Ptculture);
+var
+  currFile: file of cultureListInfo;
+
+  count: integer;
+begin
+  count := 0;
+  AssignFile(currFile, FileCulture);
+  Reset(currFile);
+  while not EoF(currFile) do
+  begin;
+    new(list^.Next);
+    list := list^.Next;
+    Read(currFile, list^.culture);
+    if count < list^.culture.cod then
+    begin
+      count := list^.culture.cod;
+    end;
+
+  end;
+  list^.Next := nil;
+
+  currMaxIdCulture := count;
+  Closefile(currFile);
+end;
+
+procedure SaveFileCulture(list: Ptculture);
+var
+  currFile: file of cultureListInfo;
+  count: integer;
+begin
+  AssignFile(currFile, FileCulture);
+  Rewrite(currFile);
+  count := 0;
+  list := list.Next;
+  while (list <> nil) do
+  begin
+    seek(currFile, count);
+    write(currFile, list.culture);
+    inc(count);
+    list := list.Next;
+  end;
+  Closefile(currFile);
+end;
+
+procedure SaveFileGarden(list: PtGarden);
+var
+  currFile: file of TGarden;
+  count: integer;
+begin
+  AssignFile(currFile, FileGarden);
+  Rewrite(currFile);
+
+  count := 0;
+  list := list.Next;
+  while (list <> nil) do
+  begin
+    seek(currFile, count);
+    write(currFile, list.garden);
+    inc(count);
+    list := list.Next;
+  end;
+  Closefile(currFile);
+end;
+
+procedure ReadFileGarden(list: PtGarden);
+var
+  currFile: file of TGarden;
+
+  count: integer;
+begin
+  count := 0;
+  AssignFile(currFile, FileGarden);
+  Reset(currFile);
+  while not EoF(currFile) do
+  begin
+    new(list^.Next);
+    list := list^.Next;
+    Read(currFile, list^.garden);
+
+    count := list^.garden.CodGarden;
+  end;
+  list^.Next := nil;
+
+  Closefile(currFile);
+end;
+
 procedure _CreateFirstFileColor;
 var
   currFile: file of RecordDictionary;
@@ -29,7 +125,7 @@ var
   tempPair: RecordDictionary;
 begin
   AssignFile(currFile, FileColor);
-  rewrite(currFile);
+  Rewrite(currFile);
 
   seek(currFile, countStr);
   tempPair.Color := clred;
@@ -60,6 +156,13 @@ begin
 end;
 
 procedure _CreateFirstFileCulture;
+  function CreateDate(const AYear, AMonth, ADays: integer): TMyDate;
+  begin
+    CreateDate.Year := AYear;
+    CreateDate.Month := AMonth;
+    CreateDate.Days := ADays;
+  end;
+
 var
   currFile: file of cultureListInfo;
   Str: cultureListInfo;
@@ -67,7 +170,7 @@ var
 begin
   countStr := 0;
   AssignFile(currFile, FileCulture);
-  rewrite(currFile);
+  Rewrite(currFile);
 
   seek(currFile, countStr);
   Str.name := 'Ìîðêîâêà';
@@ -115,7 +218,7 @@ var
 begin
   countStr := 0;
   AssignFile(currFile, FileGarden);
-  rewrite(currFile);
+  Rewrite(currFile);
 
   seek(currFile, countStr);
   Str.name := 'Ïåðâàÿ';
@@ -155,9 +258,9 @@ begin
   count := 0;
 
   AssignFile(currFile, FileColor);
-  rewrite(currFile);
+  Rewrite(currFile);
 
-  for var temp in dictionaryColorToId do
+  for var temp in dictionaryColorToId.GetAllItems do
   begin
     tempPair.corGarden := temp.Key;
     tempPair.Color := temp.Value;
@@ -177,7 +280,7 @@ var
   count: integer;
 begin
   AssignFile(currFile, UserFileGarden);
-  rewrite(currFile);
+  Rewrite(currFile);
 
   count := 0;
   for var I := 0 to _GardenX do
@@ -194,16 +297,16 @@ begin
 
 end;
 
-procedure StartData;
+procedure _CreateFirstFileGardenMas(culturelist: Ptculture);
 var
+  GardenMas: TgardenMas;
   I, J: integer;
-begin
-  dictionaryColorToId.Clear();
-  dictionaryColorToId.Add(1, clred);
-  dictionaryColorToId.Add(2, clgreen);
-  dictionaryColorToId.Add(3, clblue);
-  dictionaryColorToId.Add(4, clblack);
+  currFile: file of TGardenCell;
+  count: integer;
+  Str: TGardenCell;
 
+  list: Ptculture;
+begin
   // *
   for I := 0 to 6 do
   begin
@@ -254,12 +357,38 @@ begin
       // GardenMas[I][J].Ñulture := 666;
     end;
   end;
+
+  AssignFile(currFile, UserFileGarden);
+  Rewrite(currFile);
+
+  count := 0;
+  for I := 0 to _GardenX do
+  begin
+    for J := 0 to _GardenY do
+    begin
+      seek(currFile, count);
+      list := culturelist.Next;
+      while list <> nil do
+      begin
+        if list.culture.cod = GardenMas[I][J].Ñulture.cod then
+        begin
+          GardenMas[I][J].Ñulture.name := list.culture.name;
+          GardenMas[I][J].Ñulture.Time := list.culture.Time;
+          break;
+        end;
+        list := list.Next;
+      end;
+      write(currFile, GardenMas[I][J]);
+      inc(count);
+    end;
+  end;
+
+  Closefile(currFile);
 end;
 
 procedure ReadFileColor;
 var
   currFile: file of RecordDictionary;
-
   tempPair: RecordDictionary;
 begin
   AssignFile(currFile, FileColor);
@@ -271,6 +400,7 @@ begin
   begin
     Read(currFile, tempPair);
     dictionaryColorToId.Add(tempPair.corGarden, tempPair.Color);
+
     if currMaxIdGarden < tempPair.corGarden then
     begin
       currMaxIdGarden := tempPair.corGarden;

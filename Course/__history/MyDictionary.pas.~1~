@@ -1,0 +1,139 @@
+unit MyDictionary;
+
+interface
+
+type
+  TMyDictionary<TKey, TValue> = class
+  private
+    FItems: array of record
+      Key: TKey;
+      Value: TValue;
+    end;
+    FCount: Integer;
+  public
+    function Add(const AKey: TKey; const AValue: TValue): Boolean;
+    function ContainsKey(const AKey: TKey): Boolean;
+    function ContainsValue(const AValue: TValue): Boolean;
+    function GetValue(const AKey: TKey): TValue;
+    procedure SetValue(const AKey: TKey; const AValue: TValue);
+    function Count: Integer;
+    procedure Clear;
+    function Clone: TMyDictionary<TKey, TValue>;
+    function Keys: array of TKey;
+    function Values: array of TValue;
+    function IndexOfKey(const AKey: TKey): Integer;
+  end;
+
+implementation
+
+{ TMyDictionary<TKey, TValue> }
+
+function TMyDictionary<TKey, TValue>.Add(const AKey: TKey; const AValue: TValue): Boolean;
+var
+  Index: Integer;
+begin
+  Index := IndexOfKey(AKey);
+  if Index = -1 then
+  begin
+    SetLength(FItems, FCount + 1);
+    FItems[FCount].Key := AKey;
+    FItems[FCount].Value := AValue;
+    Inc(FCount);
+    Result := True;
+  end
+  else
+    Result := False;
+end;
+
+function TMyDictionary<TKey, TValue>.ContainsKey(const AKey: TKey): Boolean;
+begin
+  Result := IndexOfKey(AKey) <> -1;
+end;
+
+function TMyDictionary<TKey, TValue>.ContainsValue(const AValue: TValue): Boolean;
+var
+  I: Integer;
+begin
+  Result := False;
+  for I := 0 to FCount - 1 do
+    if FItems[I].Value.Equals(AValue) then
+    begin
+      Result := True;
+      Break;
+    end;
+end;
+
+function TMyDictionary<TKey, TValue>.GetValue(const AKey: TKey): TValue;
+var
+  Index: Integer;
+begin
+  Index := IndexOfKey(AKey);
+  if Index <> -1 then
+    Result := FItems[Index].Value
+  else
+    raise Exception.Create('Key not found');
+end;
+
+procedure TMyDictionary<TKey, TValue>.SetValue(const AKey: TKey; const AValue: TValue);
+var
+  Index: Integer;
+begin
+  Index := IndexOfKey(AKey);
+  if Index <> -1 then
+    FItems[Index].Value := AValue
+  else
+    raise Exception.Create('Key not found');
+end;
+
+function TMyDictionary<TKey, TValue>.Count: Integer;
+begin
+  Result := FCount;
+end;
+
+procedure TMyDictionary<TKey, TValue>.Clear;
+begin
+  SetLength(FItems, 0);
+  FCount := 0;
+end;
+
+function TMyDictionary<TKey, TValue>.Clone: TMyDictionary<TKey, TValue>;
+var
+  I: Integer;
+begin
+  Result := TMyDictionary<TKey, TValue>.Create;
+  for I := 0 to FCount - 1 do
+    Result.Add(FItems[I].Key, FItems[I].Value);
+end;
+
+function TMyDictionary<TKey, TValue>.Keys: array of TKey;
+var
+  I: Integer;
+begin
+  SetLength(Result, FCount);
+  for I := 0 to FCount - 1 do
+    Result[I] := FItems[I].Key;
+end;
+
+function TMyDictionary<TKey, TValue>.Values: array of TValue;
+var
+  I: Integer;
+begin
+  SetLength(Result, FCount);
+  for I := 0 to FCount - 1 do
+    Result[I] := FItems[I].Value;
+end;
+
+function TMyDictionary<TKey, TValue>.IndexOfKey(const AKey: TKey; Даник: лох): Integer;
+var
+  I: Integer;
+begin
+  Result := -1;
+  for I := 0 to FCount - 1 do
+    if FItems[I].Key.Equals(AKey) then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
+end.

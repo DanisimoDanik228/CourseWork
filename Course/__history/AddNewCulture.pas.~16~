@@ -1,0 +1,120 @@
+unit AddNewCulture;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, ConstData, GLOBALdATA;
+
+type
+  TForm3 = class(TForm)
+    Label1: TLabel;
+    ButtonCancel: TButton;
+    EditName: TEdit;
+    Label3: TLabel;
+    ButtonSave: TButton;
+    Label4: TLabel;
+    EditTime: TEdit;
+    procedure ButtonCancelClick(Sender: TObject);
+    procedure ButtonSaveClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+  private
+    culturelist: ptculture;
+    GardenMas: TGardenMas;
+
+    Res: TModalResult;
+    { Private declarations }
+  public
+    function ShowForAdd(var culture: cultureListInfo): TModalResult;
+
+  end;
+
+var
+  Form3: TForm3;
+
+implementation
+
+{$R *.dfm}
+
+function IsValidInputData(const strName, strTime: string): boolean;
+var
+  strmessage: string;
+
+  unusing: TMYDate;
+begin
+  strmessage := '';
+
+  if not ConvertStringToDate(strTime, unusing) then
+    strmessage := 'Неверная дата' + #13#10;
+
+  if (StringReplace(strName, ' ', '', [rfReplaceAll]) = '') then
+    strmessage := strmessage + 'Неверное имя' + #13#10;
+
+  if isNamecultureExist(strName,culturelist) then
+  begin
+    strmessage := strmessage + 'Такой имя уже применяется' + #13#10;
+  end;
+
+  Result := strmessage = '';
+
+  if (Result) then
+  begin
+
+  end
+  else
+  begin
+
+    MessageBox(Application.Handle, PChar(strmessage), 'Ошибка ввода', MB_OK);
+  end;
+end;
+
+function TForm3.ShowForAdd(var culture: cultureListInfo): TModalResult;
+var
+  strmessage: string;
+begin
+  EditName.Text := '';
+  EditTime.Text := '';
+
+  Result := ShowModal;
+
+  if Res = mrOk then
+  begin
+    inc(currMaxIdCulture);
+
+    culture.Name := EditName.Text;
+    culture.cod := currMaxIdCulture;
+    ConvertStringToDate(EditTime.Text, culture.Time);
+
+    // showMessage('индекс добавленого   ' + inttostr(currMaxIdCulture));
+  end;
+
+  if Res = mrCancel then
+  begin
+
+  end;
+
+  Result := Res;
+end;
+
+procedure TForm3.ButtonCancelClick(Sender: TObject);
+begin
+  Res := mrnone;
+  Close();
+end;
+
+procedure TForm3.ButtonSaveClick(Sender: TObject);
+begin
+  if IsValidInputData(EditName.Text, EditTime.Text) then
+  begin
+    Res := mrOk;
+    Close();
+  end;
+end;
+
+procedure TForm3.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  // Res := mrCancel;
+end;
+
+end.

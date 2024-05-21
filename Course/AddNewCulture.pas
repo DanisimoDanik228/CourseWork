@@ -20,11 +20,14 @@ type
     procedure ButtonSaveClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
+    culturelist: ptculture;
 
     Res: TModalResult;
-    { Private declarations }
+
+    function IsValidInputData(const strName, strTime: string): boolean;
   public
-    function ShowForAdd(var culture: cultureListInfo): TModalResult;
+    function ShowForAdd(var culture: cultureListInfo; culturelist: ptculture)
+      : TModalResult;
 
   end;
 
@@ -35,7 +38,30 @@ implementation
 
 {$R *.dfm}
 
-function IsValidInputData(const strName, strTime: string): boolean;
+function TForm3.IsValidInputData(const strName, strTime: string): boolean;
+  function isNameCultureExist(const Name: string; list: ptculture): boolean;
+  begin
+    result := false;
+
+    if list = nil then
+      exit;
+
+    list := list.Next;
+
+    if list = nil then
+      exit;
+
+    while list <> nil do
+    begin
+      if list.culture.Name = Name then
+      begin
+        result := true;
+        exit;
+      end;
+      list := list.Next;
+    end;
+  end;
+
 var
   strmessage: string;
 
@@ -49,14 +75,14 @@ begin
   if (StringReplace(strName, ' ', '', [rfReplaceAll]) = '') then
     strmessage := strmessage + 'Неверное имя' + #13#10;
 
-  if isNamecultureExist(strName) then
+  if isNameCultureExist(strName, culturelist) then
   begin
     strmessage := strmessage + 'Такой имя уже применяется' + #13#10;
   end;
 
-  Result := strmessage = '';
+  result := strmessage = '';
 
-  if (Result) then
+  if (result) then
   begin
 
   end
@@ -67,14 +93,16 @@ begin
   end;
 end;
 
-function TForm3.ShowForAdd(var culture: cultureListInfo): TModalResult;
+function TForm3.ShowForAdd(var culture: cultureListInfo; culturelist: ptculture)
+  : TModalResult;
 var
   strmessage: string;
 begin
+  Form3.culturelist := culturelist;
   EditName.Text := '';
   EditTime.Text := '';
 
-  Result := ShowModal;
+  result := ShowModal;
 
   if Res = mrOk then
   begin
@@ -92,7 +120,7 @@ begin
 
   end;
 
-  Result := Res;
+  result := Res;
 end;
 
 procedure TForm3.ButtonCancelClick(Sender: TObject);

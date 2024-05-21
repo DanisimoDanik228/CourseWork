@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, GlobalData,
-  System.Generics.Collections;
+  System.Generics.Collections, MyDictionary;
 
 type
   TForm4 = class(TForm)
@@ -22,9 +22,14 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     Res: TModalResult;
-    { Private declarations }
+
+    gardenlist: ptgarden;
+
+    function IsValidInputData(const strName: string;
+      const color: TColor): boolean;
   public
-    function ShowForAdd(var garden: TGARDEN): TModalResult;
+    function ShowForAdd(var garden: TGARDEN; gardenlist: ptgarden)
+      : TModalResult;
     { Public declarations }
   end;
 
@@ -35,7 +40,42 @@ implementation
 
 {$R *.dfm}
 
-function IsValidInputData(const strName: string; const color: TColor): boolean;
+function TForm4.IsValidInputData(const strName: string;
+  const color: TColor): boolean;
+  function IsColorAlreadyExist(const color: TColor): boolean;
+  begin
+    result := false;
+    for var Item in dictionaryColorToId.GetAllItems do
+    begin
+      if Item.Value = color then
+      begin
+        result := true;
+      end;
+    end;
+  end;
+  function isNameGardenExist(const Name: string; list: ptgarden): boolean;
+  begin
+    result := false;
+
+    if list = nil then
+      exit;
+
+    list := list.Next;
+
+    if list = nil then
+      exit;
+
+    while list <> nil do
+    begin
+      if list.garden.Name = Name then
+      begin
+        result := true;
+        exit;
+      end;
+      list := list.Next;
+    end;
+  end;
+
 var
   strmessage: string;
 begin
@@ -47,14 +87,14 @@ begin
   if IsColorAlreadyExist(color) then
     strmessage := strmessage + 'Такой цвет уже применяется' + #13#10;
 
-  if isNameGardenExist(strName) then
+  if isNameGardenExist(strName, gardenlist) then
   begin
-    strmessage := strmessage + 'Такой имя уже применяется' + #13#10;
+    strmessage := strmessage + 'Такое имя уже применяется' + #13#10;
   end;
 
-  Result := strmessage = '';
+  result := strmessage = '';
 
-  if (Result) then
+  if (result) then
   begin
 
   end
@@ -64,13 +104,15 @@ begin
   end;
 end;
 
-function TForm4.ShowForAdd(var garden: TGARDEN): TModalResult;
+function TForm4.ShowForAdd(var garden: TGARDEN; gardenlist: ptgarden)
+  : TModalResult;
 begin
+  Form4.gardenlist := gardenlist;
   EditName.Text := '';
 
   ColorBox1.Selected := clBlack;
 
-  Result := ShowModal;
+  result := ShowModal;
 
   if Res = mrOk then
   begin
@@ -89,7 +131,7 @@ begin
 
   end;
 
-  Result := Res;
+  result := Res;
 end;
 
 procedure TForm4.ButtonCancelClick(Sender: TObject);
