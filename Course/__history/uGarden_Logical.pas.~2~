@@ -1,0 +1,83 @@
+unit uGarden_Logical;
+
+interface
+
+uses
+  ConstData, GLOBALdATA, SysUtils, Vcl.Dialogs,
+  Graphics,mydictionary;
+
+function CheckCultureUsing(const culture: string;
+  GardenMas: tgardenmas): boolean;
+function CheckGardenUsing(const gardencod: integer; GardenMas: tgardenmas): boolean;
+procedure DeleteCulture(const name: string; list: Ptculture);
+procedure DeleteGarden(const name: string; list: ptgarden;
+  dictionaryColorToId: TMyDictionary<integer, Tcolor>);
+
+implementation
+
+function CheckCultureUsing(const culture: string;
+  GardenMas: tgardenmas): boolean;
+begin
+  result := false;
+  for var I := 0 to _GardenX do
+  begin
+    for var J := 0 to _GardenY do
+    begin
+      if GardenMas[I][J].Сulture.name = culture then
+      begin
+        result := true;
+      end;
+    end;
+  end;
+end;
+
+procedure DeleteCulture(const name: string; list: Ptculture);
+begin
+  while (list.Next <> nil) and (list.Next.culture.name <> name) do
+  begin
+    list := list.Next;
+  end;
+  if (list.Next <> nil) and (list.Next.culture.name = name) then
+  begin
+    list.Next := list.Next.Next;
+  end;
+end;
+
+function CheckGardenUsing(const gardencod: integer; GardenMas: tgardenmas): boolean;
+begin
+  result := false;
+  for var I := 0 to _GardenX do
+  begin
+    for var J := 0 to _GardenY do
+    begin
+      if GardenMas[I][J].CodGarden = gardencod then
+      begin
+        result := true;
+      end;
+    end;
+  end;
+end;
+
+procedure DeleteGarden(const name: string; list: ptgarden;
+  dictionaryColorToId: TMyDictionary<integer, Tcolor>);
+var
+  index: integer;
+begin
+  index := GetIdGarden(name, list);
+  // ShowMessage('Имя на удаление  : ' + name + ' индекс : ' + inttostr(index));
+
+  while (list.Next <> nil) and (list.Next.garden.CodGarden <> index) do
+  begin
+    list := list.Next;
+  end;
+
+  if (list.Next <> nil) and (list.Next.garden.CodGarden = index) then
+  begin
+    list.Next := list.Next.Next;
+    // ShowMessage('id : ' + inttostr(index) + '  color : ' +
+    // ColorToString(dictionaryColorToId[index]));
+    dictionaryColorToId.Remove(index);
+  end;
+end;
+
+end.

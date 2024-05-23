@@ -101,30 +101,33 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="Main.pas">
+        <DCCReference Include="uMain.pas">
             <Form>Form1</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Form2Garden.pas">
+        <DCCReference Include="uGarden.pas">
             <Form>Form2</Form>
         </DCCReference>
-        <DCCReference Include="GlobalData.pas"/>
-        <DCCReference Include="ConstData.pas"/>
-        <DCCReference Include="F2_Logical.pas"/>
-        <DCCReference Include="F1_Logical.pas"/>
-        <DCCReference Include="AddNewCulture.pas">
+        <DCCReference Include="uGlobalData.pas"/>
+        <DCCReference Include="uGarden_Logical.pas"/>
+        <DCCReference Include="uMain_Logical.pas"/>
+        <DCCReference Include="uAddNewCulture.pas">
             <Form>Form3</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="AddNewGarden.pas">
+        <DCCReference Include="uAddNewGarden.pas">
             <Form>Form4</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="ShowAll.pas">
+        <DCCReference Include="uShowAllGardens.pas">
             <Form>Form5</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="MyDictionary.pas"/>
+        <DCCReference Include="uDictionary.pas"/>
+        <DCCReference Include="uSP.pas">
+            <Form>Form6</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="ModelSupport_Project3\default.txaPackage"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
