@@ -10,7 +10,7 @@ uses
   Math, uGlobalData, uConstData, uMain_Logical,
   System.ImageList, Vcl.ImgList, System.Actions, Vcl.ActnList, Vcl.Grids,
   Vcl.Menus, Vcl.ToolWin, Vcl.ComCtrls, uAddNewCulture, uAddNewGarden,
-  uShowALLGardens, uDictionary, Messaging, uSP;
+  uShowALLGardens, uDictionary, Messaging, uSP,uWorks;
 
 type
   TForm1 = class(TForm)
@@ -36,6 +36,9 @@ type
     ActionShowSP: TAction;
     N2: TMenuItem;
     ShowSP1: TMenuItem;
+    N3: TMenuItem;
+    N4: TMenuItem;
+    ActionShowWork: TAction;
     procedure PaintRect(const x, y: integer; const color: Tcolor;
       const brush: Tcolor);
     procedure PaintBox1Paint(Sender: TObject);
@@ -54,9 +57,12 @@ type
     procedure ActionShowAllExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ActionShowSPExecute(Sender: TObject);
+    procedure ActionShowWorkExecute(Sender: TObject);
   private
     gardenlist: ptgarden;
     culturelist: ptculture;
+    workslist : ptworks;
+
     IsLBM: boolean;
 
     ScaleGarden: integer;
@@ -215,6 +221,8 @@ begin
 
   saveFileCulture(culturelist);
 
+  SaveFileworks(workslist);;
+
   MessageBox(Application.Handle, 'Сохранено успешно', 'Сохранение', MB_OK);
 end;
 
@@ -226,6 +234,12 @@ end;
 procedure TForm1.ActionShowSPExecute(Sender: TObject);
 begin
   uSP.Form6.Show;
+end;
+
+procedure TForm1.ActionShowWorkExecute(Sender: TObject);
+begin
+
+  Form7.MyShow(workslist);
 end;
 
 procedure TForm1.ActionMinusExecute(Sender: TObject);
@@ -267,6 +281,7 @@ var
 begin
   new(gardenlist);
   new(culturelist);
+  new(workslist);
 
   Form1.Caption := NameMainForm;
 
@@ -301,6 +316,7 @@ begin
   try
     ReadFileColor;
 
+    ReadfileWorks(workslist);
     readGardenMas;
     readfileculture(culturelist);
     readfilegarden(gardenlist);

@@ -16,6 +16,9 @@ procedure SaveFileColor;
 // *
 procedure SaveGardenMas;
 procedure ReadGardenMas;
+
+procedure SaveFileWorks(list: ptworks);
+procedure ReadfileWorks(list: ptworks);
 // *
 
 // ONLY FOR DEVELOPERS
@@ -54,6 +57,42 @@ begin
   list^.Next := nil;
 
   currMaxIdCulture := count;
+  Closefile(currFile);
+end;
+
+procedure ReadfileWorks(list: ptworks);
+var
+  currFile: file of worksRecord;
+begin
+  AssignFile(currFile, NameFileWorks);
+  reset(currFile);
+  while not EoF(currFile) do
+  begin;
+    new(list^.next);
+    list := list^.next;
+    Read(currFile, list^.work);
+  end;
+  list := nil;
+
+  Closefile(currFile);
+end;
+
+procedure SaveFileWorks(list: ptworks);
+var
+  currFile: file of worksRecord;
+  count: integer;
+begin
+  AssignFile(currFile, NameFileWorks);
+  Rewrite(currFile);
+  count := 0;
+  list := list.Next;
+  while (list <> nil) do
+  begin
+    seek(currFile, count);
+    write(currFile, list.work);
+    inc(count);
+    list := list.Next;
+  end;
   Closefile(currFile);
 end;
 

@@ -1,0 +1,60 @@
+unit uAddWork;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.WinXCtrls,
+  Vcl.ComCtrls, Vcl.StdCtrls, uglobaldata;
+
+type
+  TForm8 = class(TForm)
+    EditName: TEdit;
+    EditDesc: TEdit;
+    Editdate: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    procedure ButtonOkClick(Sender: TObject);
+  private
+  Res :TModalResult;
+    function IsValidInputData(const str1, str2, str3: string): boolean;
+    { Private declarations }
+  public
+    function ShowForNewTask(var Task: worksRecord): TModalResult;
+    function ShowForEditing(var Task: worksRecord): TModalResult;
+  end;
+
+var
+  Form8: TForm8;
+
+implementation
+
+{$R *.dfm}
+ function TForm8.ShowForNewTask(var Task: worksRecord): TModalResult;
+begin
+  result := ShowModal;
+end;
+
+function TForm8.ShowForEditing(var Task: worksRecord): TModalResult;
+begin
+  result := ShowModal;
+end;
+
+function TForm8.IsValidInputData(const str1, str2, str3: string): boolean;
+begin
+  result := true;
+end;
+
+procedure TForm8.ButtonOkClick(Sender: TObject);
+begin
+
+  if IsValidInputData(EditName.Text, Editdate.Text, EditDesc.Text) then
+  begin
+    Res := mrOk;
+    Close();
+  end;
+end;
+
+end.

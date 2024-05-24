@@ -7,29 +7,39 @@ uses
   Vcl.Dialogs, uDictionary;
 
 const
-  textSP =
-  'Программное средство "Мой Сад"'+ #13#10 +
-  'предназначено для облегчениия'+ #13#10 +
-  'работ садовода. В функционал '+ #13#10 +
-  'входит редактирование грядок/культур,'+ #13#10 +
-  'а так же удобный просмотр культур'+ #13#10 +
-  'на грядках';
+  textSP = 'Программное средство "Мой Сад"' + #13#10 +
+    'предназначено для облегчениия' + #13#10 + 'работ садовода. В функционал ' +
+    #13#10 + 'входит редактирование грядок/культур,' + #13#10 +
+    'а так же удобный просмотр культур' + #13#10 + 'на грядках';
 
   PenSize = 2;
   FileCulture = 'culture.cul';
   FileGarden = 'garden.cul';
   FileColor = 'colorsGarden.cul';
+  NameFileWorks = 'worksDeal.cul';
 
   UserFileGarden = 'userGarden.garden';
 
   NameMainForm = 'Мой Сад';
 
-  NameGardenPtcture = 'фото_сада_с_цветами_png.bmp';
-
   _GardenX = 20;
   _GardenY = 10;
 
 type
+
+  worksRecord = record
+    Name: string[255];
+    Description: string[255];
+    Date: string[255];
+  end;
+  ptworks = ^works;
+
+  works = record
+    work: worksRecord;
+    next: ptworks;
+  end;
+
+
 
   Tstring = string[50];
 
@@ -84,7 +94,7 @@ var
   currMaxIdGarden: integer;
 
 function IdentifyColor(const cod: integer): TColor;
-function ConvertStringToDate(const dateStr: string; var date: TMyDate): boolean;
+function ConvertStringToDate(const dateStr: string; var Date: TMyDate): boolean;
 function ConvertDateToString(const dateStr: TMyDate): string;
 function GetIdGarden(const Name: string; list: PtGarden): integer;
 // procedure PrintGarden(dictionaryColorToId: TMyDictionary<integer, TColor>;
@@ -180,14 +190,14 @@ begin
   result := dictionaryColorToId[cod];
 end;
 
-function ConvertStringToDate(const dateStr: string; var date: TMyDate): boolean;
+function ConvertStringToDate(const dateStr: string; var Date: TMyDate): boolean;
 begin
   ConvertStringToDate := true;
 
   try
-    date.Days := StrToInt((dateStr[1] + dateStr[2]));
-    date.Month := StrToInt((dateStr[4] + dateStr[5]));
-    date.Year := StrToInt((dateStr[7]));
+    Date.Days := StrToInt((dateStr[1] + dateStr[2]));
+    Date.Month := StrToInt((dateStr[4] + dateStr[5]));
+    Date.Year := StrToInt((dateStr[7]));
   except
     ConvertStringToDate := false;
   end;

@@ -100,13 +100,11 @@ object Form1: TForm1
       Left = 87
       Top = 0
       Action = Form2.ActionAddCulture
-      ImageIndex = 22
     end
     object ToolButton7: TToolButton
       Left = 110
       Top = 0
       Action = Form2.ActionAddGarden
-      ImageIndex = 1
     end
   end
   object MainMenu1: TMainMenu
@@ -125,6 +123,13 @@ object Form1: TForm1
       object ShowSP1: TMenuItem
         Action = ActionShowSP
         Caption = #1057#1087#1088#1072#1074#1082#1072
+      end
+      object N3: TMenuItem
+        Caption = '-'
+      end
+      object N4: TMenuItem
+        Action = ActionShowWork
+        Caption = #1055#1083#1072#1085#1080#1088#1086#1074#1072#1085#1080#1077' '#1088#1072#1073#1086#1090
       end
     end
   end
@@ -960,6 +965,10 @@ object Form1: TForm1
     object ActionShowSP: TAction
       Caption = 'ShowSP'
       OnExecute = ActionShowSPExecute
+    end
+    object ActionShowWork: TAction
+      Caption = 'Action'
+      OnExecute = ActionShowWorkExecute
     end
   end
 end

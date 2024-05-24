@@ -128,6 +128,14 @@
             <Form>Form6</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="uWorks.pas">
+            <Form>Form7</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="uAddWork.pas">
+            <Form>Form8</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="ModelSupport_Project3\default.txaPackage"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

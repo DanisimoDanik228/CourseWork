@@ -11,7 +11,9 @@ uses
   uAddNewGarden in 'uAddNewGarden.pas' {Form4},
   uShowAllGardens in 'uShowAllGardens.pas' {Form5},
   uDictionary in 'uDictionary.pas',
-  uSP in 'uSP.pas' {Form6};
+  uSP in 'uSP.pas' {Form6},
+  uWorks in 'uWorks.pas' {Form7},
+  uAddWork in 'uAddWork.pas' {Form8};
 
 {$R *.res}
 
@@ -24,6 +26,8 @@ begin
   Application.CreateForm(TForm4, Form4);
   Application.CreateForm(TForm5, Form5);
   Application.CreateForm(TForm6, Form6);
+  Application.CreateForm(TForm7, Form7);
+  Application.CreateForm(TForm8, Form8);
   Application.Run;
 
 end.
