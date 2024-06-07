@@ -16,6 +16,7 @@ type
   private
     { Private declarations }
   public
+    function MyShow(): TModalResult;
     { Public declarations }
   end;
 
@@ -25,6 +26,11 @@ var
 implementation
 
 {$R *.dfm}
+
+function TForm6.MyShow(): TModalResult;
+begin
+  result := ShowModal;
+end;
 
 procedure TForm6.Button1Click(Sender: TObject);
 begin

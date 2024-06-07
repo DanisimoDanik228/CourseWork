@@ -1,6 +1,6 @@
 object Form8: TForm8
-  Left = 0
-  Top = 0
+  Left = 452
+  Top = 376
   BorderStyle = bsToolWindow
   Caption = #1047#1072#1087#1080#1089#1100' '#1086' '#1088#1072#1073#1086#1090#1077
   ClientHeight = 122
@@ -11,6 +11,7 @@ object Form8: TForm8
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poDesigned
   TextHeight = 15
   object Label1: TLabel
     Left = 8
@@ -54,7 +55,7 @@ object Form8: TForm8
   object EditName: TEdit
     Left = 110
     Top = 27
-    Width = 121
+    Width = 224
     Height = 23
     TabOrder = 2
   end
@@ -68,7 +69,7 @@ object Form8: TForm8
   object Editdate: TEdit
     Left = 110
     Top = 56
-    Width = 121
+    Width = 224
     Height = 23
     TabOrder = 4
   end

@@ -1,0 +1,273 @@
+object Form2: TForm2
+  Left = 226
+  Top = 327
+  BorderStyle = bsDialog
+  Caption = 'NIL'
+  ClientHeight = 367
+  ClientWidth = 694
+  Color = clWhite
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Position = poDesigned
+  TextHeight = 15
+  object LabelCulture: TLabel
+    Left = 8
+    Top = 14
+    Width = 77
+    Height = 25
+    Caption = #1050#1091#1083#1100#1090#1091#1088#1072':'
+    Color = clBackground
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+  end
+  object LabelTime: TLabel
+    Left = 8
+    Top = 53
+    Width = 156
+    Height = 25
+    Caption = #1042#1088#1077#1084#1103' '#1089#1086#1079#1088#1077#1074#1072#1085#1080#1103':'
+    Color = clBackground
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+  end
+  object LabelBed: TLabel
+    Left = 8
+    Top = 92
+    Width = 100
+    Height = 25
+    Caption = #1048#1084#1103' '#1075#1088#1103#1076#1082#1080':'
+    Color = clBackground
+    Enabled = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentColor = False
+    ParentFont = False
+  end
+  object LabelGarden: TLabel
+    Left = 297
+    Top = 144
+    Width = 144
+    Height = 23
+    Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1075#1088#1103#1076#1082#1080
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 144
+    Width = 164
+    Height = 23
+    Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1050#1091#1083#1100#1090#1091#1088#1099
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+  end
+  object ButtonSave: TButton
+    Left = 592
+    Top = 329
+    Width = 94
+    Height = 30
+    Cancel = True
+    Caption = 'Ok'
+    DisabledImageName = 'ButtonName'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 0
+    OnClick = ButtonSaveClick
+  end
+  object EditCulture: TEdit
+    Left = 184
+    Top = 14
+    Width = 169
+    Height = 33
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    ParentShowHint = False
+    ShowHint = False
+    TabOrder = 1
+    TextHint = #1082#1091#1083#1100#1090#1091#1088#1072
+  end
+  object EditTime: TEdit
+    Left = 184
+    Top = 53
+    Width = 169
+    Height = 33
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 2
+    TextHint = 'dd:mm:y'
+  end
+  object EditGarden: TEdit
+    Left = 184
+    Top = 92
+    Width = 169
+    Height = 33
+    BevelOuter = bvNone
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ImeName = 'EditBed'
+    ParentFont = False
+    TabOrder = 3
+    TextHint = #1075#1088#1103#1076#1082#1072
+  end
+  object ButtonClose: TButton
+    Left = 592
+    Top = 292
+    Width = 94
+    Height = 31
+    Cancel = True
+    Caption = #1047#1072#1082#1088#1099#1090#1100
+    DisabledImageName = 'ButtonName'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -17
+    Font.Name = 'Segoe UI'
+    Font.Style = []
+    ParentFont = False
+    TabOrder = 4
+    OnClick = ButtonCloseClick
+  end
+  object ButtonAddCulture: TButton
+    Left = 1
+    Top = 329
+    Width = 70
+    Height = 25
+    Action = ActionAddCulture
+    Caption = #1076#1086#1073#1072#1074#1080#1090#1100
+    TabOrder = 5
+  end
+  object ButtonAddGarden: TButton
+    Left = 289
+    Top = 329
+    Width = 64
+    Height = 25
+    Action = ActionAddGarden
+    Caption = #1076#1086#1073#1072#1074#1080#1090#1100
+    TabOrder = 6
+  end
+  object ListViewCulture: TListView
+    Left = 1
+    Top = 173
+    Width = 257
+    Height = 150
+    Columns = <
+      item
+        Caption = #1050#1091#1083#1100#1090#1091#1088#1072
+      end
+      item
+        Caption = #1042#1088#1077#1084#1103' '#1087#1088#1086#1080#1079#1088#1086#1089#1090#1072#1085#1080#1103
+      end>
+    Ctl3D = False
+    ReadOnly = True
+    RowSelect = True
+    TabOrder = 7
+    ViewStyle = vsReport
+    OnClick = ListViewCultureClick
+  end
+  object ListViewGarden: TListView
+    Left = 289
+    Top = 173
+    Width = 232
+    Height = 150
+    Columns = <
+      item
+        Caption = #1043#1088#1103#1076#1082#1072
+      end
+      item
+        Caption = #1062#1074#1077#1090
+      end>
+    Ctl3D = False
+    ReadOnly = True
+    RowSelect = True
+    TabOrder = 8
+    ViewStyle = vsReport
+    OnClick = ListViewGardenClick
+  end
+  object ButtonDeleteGarden: TButton
+    Left = 359
+    Top = 329
+    Width = 63
+    Height = 25
+    Action = ActionDeleteGarden
+    Caption = #1091#1076#1072#1083#1080#1090#1100
+    TabOrder = 9
+  end
+  object ButtonDeleteCulture: TButton
+    Left = 77
+    Top = 329
+    Width = 74
+    Height = 25
+    Action = ActionDeleteCulture
+    Caption = #1091#1076#1072#1083#1080#1090#1100
+    TabOrder = 10
+  end
+  object Button1: TButton
+    Left = 592
+    Top = 80
+    Width = 83
+    Height = 25
+    Caption = 'Print All Data'
+    TabOrder = 11
+    OnClick = Button1Click
+  end
+  object ActionListForm2: TActionList
+    Left = 616
+    Top = 112
+    object ActionAddCulture: TAction
+      Caption = 'ActionAddCulture'
+      OnExecute = ActionAddCultureExecute
+    end
+    object ActionAddGarden: TAction
+      Caption = 'ActionAddGarden'
+      OnExecute = ActionAddGardenExecute
+    end
+    object ActionDeleteCulture: TAction
+      Caption = 'ActionDeleteCulture'
+      OnExecute = ActionDeleteCultureExecute
+    end
+    object ActionDeleteGarden: TAction
+      Caption = 'ActionDeleteGarden'
+      OnExecute = ActionDeleteGardenExecute
+    end
+  end
+end

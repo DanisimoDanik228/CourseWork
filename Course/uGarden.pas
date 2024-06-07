@@ -77,20 +77,23 @@ var
   ListItem: TListItem;
   strColor: string;
 begin
-  ListViewGarden.Clear;
+  try
+    ListViewGarden.Clear;
 
-  ListViewGarden.Columns[0].Width := 100;
-  ListViewGarden.Columns[1].Width := 100;
-
-  list := list.Next;
-  while list <> nil do
-  begin
-    ListItem := ListViewGarden.Items.Add;
-    ListItem.Caption := list.garden.Name;
-    strColor := ColorToString(IdentifyColor(list.garden.CodGarden));
-    ListItem.SubItems.Add(Copy(strColor, 3, Length(strColor)));
+    ListViewGarden.Columns[0].Width := 100;
+    ListViewGarden.Columns[1].Width := 100;
 
     list := list.Next;
+    while list <> nil do
+    begin
+      ListItem := ListViewGarden.Items.Add;
+      ListItem.Caption := list.garden.Name;
+      strColor := ColorToString(IdentifyColor(list.garden.CodGarden));
+      ListItem.SubItems.Add(Copy(strColor, 3, Length(strColor)));
+
+      list := list.Next;
+    end;
+  EXCEPT
   end;
 
 end;
@@ -99,38 +102,68 @@ procedure TForm2.CreateListViewCulture(list: PtCulture);
 var
   ListItem: TListItem;
 begin
-  ListViewCulture.Clear;
+  try
+    ListViewCulture.Clear;
 
-  ListViewCulture.Columns[0].Width := 100;
-  ListViewCulture.Columns[1].Width := 200;
-
-  list := list.Next;
-  while list <> nil do
-  begin
-    ListItem := ListViewCulture.Items.Add;
-    // ShowMessage(list.culture.Name);
-    ListItem.Caption := list.culture.Name;
-    ListItem.SubItems.Add(ConvertDateToString(list.culture.Time));
+    ListViewCulture.Columns[0].Width := 100;
+    ListViewCulture.Columns[1].Width := 200;
 
     list := list.Next;
+    while list <> nil do
+    begin
+      ListItem := ListViewCulture.Items.Add;
+      // ShowMessage(list.culture.Name);
+      ListItem.Caption := list.culture.Name;
+      ListItem.SubItems.Add(ConvertDateToString(list.culture.Time));
+
+      list := list.Next;
+    end;
+
+  EXCEPT
   end;
 
 end;
 
 procedure TForm2.ActionAddCultureExecute(Sender: TObject);
+       function isNameCultureExist(const Name: string; list: ptculture): boolean;
+  begin
+    result := false;
 
+    if list = nil then
+      exit;
+
+    list := list.Next;
+
+    if list = nil then
+      exit;
+
+    while list <> nil do
+    begin
+      if list.culture.Name = Name then
+      begin
+        result := true;
+        exit;
+      end;
+      list := list.Next;
+    end;
+  end;
 var
   Res: TModalResult;
   newculture: cultureListInfo;
 begin
-  Res := Form3.ShowForAdd(newculture, culturelist);
+  try
+    Res := Form3.ShowForAdd(newculture, culturelist);
 
-  if Res = mrnone then
-    Exit;
+    if Res = mrnone then
+      Exit;
 
-  // ShowMessage('add culture  result : ' + inttostr(ord(Res)));
-  AddCulture(newculture, culturelist);
-  CreateListViewCulture(culturelist);
+    // ShowMessage('add culture  result : ' + inttostr(ord(Res)));
+
+    AddCulture(newculture, culturelist);
+    CreateListViewCulture(culturelist);
+  EXCEPT
+  end;
+
 end;
 
 procedure TForm2.ActionAddGardenExecute(Sender: TObject);
@@ -140,15 +173,24 @@ var
   newgarden: TGARDEN;
 
 begin
-  Res := Form4.ShowForAdd(newgarden, gardenlist);
+  try
+    Res := Form4.ShowForAdd(newgarden, gardenlist);
 
-  if Res = mrnone then
-    Exit;
+    if Res = mrnone then
+      Exit;
 
-  // ShowMessage('add garden');
+    // ShowMessage('add garden');
 
-  AddGarden(newgarden, gardenlist);
-  CreateListViewGarden(gardenlist);
+    if True then
+    begin
+
+    end;
+
+    AddGarden(newgarden, gardenlist);
+    CreateListViewGarden(gardenlist);
+  EXCEPT
+  end;
+
 end;
 
 procedure TForm2.ActionDeleteCultureExecute(Sender: TObject);
@@ -156,6 +198,11 @@ var
   SelectedItem: TListItem;
 
 begin
+  try
+
+  EXCEPT
+  end;
+
   if ListViewCulture.Selected <> nil then
   begin
     SelectedItem := ListViewCulture.Selected;
@@ -215,9 +262,9 @@ end;
 procedure TForm2.Button1Click(Sender: TObject);
 begin
   // ShowMessage('currMaxIdGarden : ' + inttostr(currMaxIdGarden));
-  // PrintCulture(culturelist);
-  // PrintGarden(dictionaryColorToId, gardenlist);
-  // PrintDictionary;
+  PrintCulture(culturelist);
+  PrintGarden(dictionaryColorToId, gardenlist);
+  PrintDictionary;
 end;
 
 procedure TForm2.ButtonCloseClick(Sender: TObject);
@@ -226,7 +273,6 @@ begin
 end;
 
 procedure TForm2.ButtonSaveClick(Sender: TObject);
-
 
 var
   culture: TGardenCell;
@@ -321,9 +367,9 @@ begin
   result := ShowModal;
 end;
 
-function TForm2.FormShowForChangeCtrl(CurrPoint, StartPoint: TPoint): TModalResult;
+function TForm2.FormShowForChangeCtrl(CurrPoint, StartPoint: TPoint)
+  : TModalResult;
 begin
-
 
   CreateListViewGarden(gardenlist);
   CreateListViewCulture(culturelist);

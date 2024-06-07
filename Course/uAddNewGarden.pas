@@ -145,7 +145,8 @@ begin
   begin
     Res := mrOk;
     Close();
-  end;
+  end  else
+  Res := mrnone;
 end;
 
 procedure TForm4.FormClose(Sender: TObject; var Action: TCloseAction);

@@ -166,6 +166,8 @@ begin
   AssignFile(currFile, FileColor);
   Rewrite(currFile);
 
+  countStr := 0;
+
   seek(currFile, countStr);
   tempPair.Color := clred;
   tempPair.corGarden := 1;

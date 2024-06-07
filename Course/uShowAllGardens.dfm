@@ -1,6 +1,7 @@
 object Form5: TForm5
-  Left = 0
-  Top = 0
+  Left = 565
+  Top = 295
+  BorderStyle = bsDialog
   Caption = #1042#1072#1096' '#1057#1072#1076
   ClientHeight = 410
   ClientWidth = 697
@@ -10,6 +11,7 @@ object Form5: TForm5
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poDesigned
   OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 15

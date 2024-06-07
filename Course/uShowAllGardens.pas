@@ -67,7 +67,7 @@ begin
   while gardenlist <> nil do
   begin
     listitem := ListViewGarden.Items.Add;
-    listitem.Caption := gardenlist.garden.Name;
+    listitem.Caption :=  gardenlist.garden.Name ;
     strColor := ColorToString(IdentifyColor(gardenlist.garden.CodGarden));
     listitem.SubItems.Add(Copy(strColor, 3, length(strColor)));
 
@@ -101,7 +101,7 @@ begin
   while CultutrList <> nil do
   begin
     listitem := ListViewCultureAll.Items.Add;
-    listitem.Caption := CultutrList.culture.Name;
+    listitem.Caption :=  CultutrList.culture.Name ;
     CultutrList := CultutrList.Next;
   end;
 
@@ -113,20 +113,20 @@ var
 begin
 
   printAllGarden;
+
   for var i := 0 to _GardenX do
   begin
     for var j := 0 to _GardenY do
     begin
       if gardenmas[i][j].Ñulture.Name = nameCulture then
       begin
-        PaintBox1.Canvas.brush.color := clsilver;
+        PaintBox1.Canvas.brush.color :=
+          NegativeColor(IdentifyColor(gardenmas[i][j].CodGarden));
         PaintBox1.Canvas.Pen.color := IdentifyColor(gardenmas[i][j].CodGarden);
         Rect.Create(i * SizeRect + SizePen, j * SizeRect + SizePen,
           (i) * SizeRect + SizeRect * 2 div 3, (j) * SizeRect + SizeRect
           * 2 div 3);
         PaintBox1.Canvas.Rectangle(Rect);
-
-        // PaintRect(i, j, IdentifyColor(GardenMas[i][j].CodGarden), clsilver);
       end;
     end;
   end;
@@ -236,8 +236,7 @@ begin
             FrequensChars.Add(gardenmas[i][j].Ñulture.cod, 1);
           end;
 
-
-       // showmessage(inttostr(idGarden[k]) + ' : ' + inttostr(FrequensChars[gardenmas[i][j].Ñulture.cod]));
+          // showmessage(inttostr(idGarden[k]) + ' : ' + inttostr(FrequensChars[gardenmas[i][j].Ñulture.cod]));
         end;
       end;
     end

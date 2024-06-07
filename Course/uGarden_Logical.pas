@@ -23,6 +23,9 @@ procedure AddGarden(const newgARDEN: TGarden; list: ptgarden);
 var
   firstNode: ptgarden;
 begin
+  if list = nil then
+    exit;
+
   firstNode := list.Next;
 
   new(list.Next);
@@ -33,6 +36,9 @@ end;
 function IsValidGarden(list: ptgarden; const str: string;
   var cod: integer): boolean;
 begin
+  if list = nil then
+    exit;
+
   result := false;
 
   list := list.Next;
@@ -51,6 +57,9 @@ end;
 function IsValidCulture(list: Ptculture; const str: string;
   var cod: integer): boolean;
 begin
+  if list = nil then
+    exit;
+
   result := false;
 
   list := list.Next;
@@ -71,6 +80,8 @@ procedure AddCulture(const newCulture: cultureListInfo; list: Ptculture);
 var
   firstNode: Ptculture;
 begin
+  if list = nil then
+    exit;
   firstNode := list.Next;
 
   new(list.Next);
@@ -95,6 +106,8 @@ end;
 
 procedure DeleteCulture(const name: string; list: Ptculture);
 begin
+  if list = nil then
+    exit;
   while (list.Next <> nil) and (list.Next.culture.name <> name) do
   begin
     list := list.Next;
@@ -124,6 +137,9 @@ procedure DeleteGarden(const name: string; list: ptgarden);
 var
   index: integer;
 begin
+  if list = nil then
+    exit;
+
   index := GetIdGarden(name, list);
   // ShowMessage('Имя на удаление  : ' + name + ' индекс : ' + inttostr(index));
 

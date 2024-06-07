@@ -135,12 +135,14 @@ begin
   begin
     Res := mrOk;
     Close();
-  end;
+  end
+  else
+  Res := mrnone;
 end;
 
 procedure TForm3.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  // Res := mrCancel;
+  // Res := mrNone;
 end;
 
 end.

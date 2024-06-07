@@ -2,6 +2,8 @@ unit uDictionary;
 
 interface
 
+uses Vcl.Dialogs;
+
 type
   TKeyValuePair<TKey, TValue> = record
     Key: TKey;
@@ -81,6 +83,10 @@ var
   Index, I: Integer;
 begin
   Index := FindIndex(Key);
+
+  if Index = -1 then
+    showmessage('Ex : not found key');
+
   if Index >= 0 then
   begin
     for I := Index to High(FItems) - 1 do

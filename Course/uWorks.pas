@@ -167,7 +167,6 @@ end;
 procedure TForm7.ListView1Click(Sender: TObject);
 begin
   ButtonDelete.Enabled := ListView1.Selected <> nil;
-
 end;
 
 end.

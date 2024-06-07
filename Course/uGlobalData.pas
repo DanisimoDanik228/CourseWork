@@ -4,7 +4,7 @@ interface
 
 uses
   Types, Graphics, sysUtils,
-  Vcl.Dialogs, uDictionary;
+  Vcl.Dialogs, uDictionary,windows;
 
 const
   textSP = 'Программное средство "Мой Сад"' + #13#10 +
@@ -97,13 +97,32 @@ function IdentifyColor(const cod: integer): TColor;
 function ConvertStringToDate(const dateStr: string; var Date: TMyDate): boolean;
 function ConvertDateToString(const dateStr: TMyDate): string;
 function GetIdGarden(const Name: string; list: PtGarden): integer;
-// procedure PrintGarden(dictionaryColorToId: TMyDictionary<integer, TColor>;
-// list: PtGarden);
-// procedure PrintDictionary(dictionaryColorToId: TMyDictionary<integer, TColor>);
-// procedure PrintCulture(list: Ptculture);
+ procedure PrintGarden(dictionaryColorToId: TMyDictionary<integer, TColor>;
+ list: PtGarden);
+ procedure PrintDictionary;
+ procedure PrintCulture(list: Ptculture);
 
+    function NegativeColor(const color: Tcolor): Tcolor;
 implementation
+ function NegativeColor(const color: Tcolor): Tcolor;
+var
+  R, G, B: BYTE;
+begin
+  randomize;
+  result := RGB((255 - GetRValue(color)) mod 256, (255 - GetGValue(color))
+    mod 256, (255 - GetBValue(color)) mod 256);
 
+  if GetRValue(result) > 128 then
+  begin
+    result := RGB(GetRValue(result) - 100, GetGValue(result),
+      GetBValue(result));
+  end
+  else
+  begin
+    result := RGB(GetRValue(result) + 100, GetGValue(result),
+      GetBValue(result));
+  end;
+end   ;
 function GetIdGarden(const Name: string; list: PtGarden): integer;
 begin
   list := list.Next;
@@ -120,7 +139,7 @@ begin
     end;
 
   except
-    ShowMessage('Такого имени в грядках не существует');
+    //ShowMessage('Такого имени в грядках не существует');
   end;
 
   if result = -1 then
@@ -130,7 +149,7 @@ begin
   end;
 end;
 
-procedure PrintDictionary(dictionaryColorToId: TMyDictionary<integer, TColor>);
+procedure PrintDictionary;
 var
   str: string;
 begin

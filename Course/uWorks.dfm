@@ -1,6 +1,6 @@
 object Form7: TForm7
-  Left = 0
-  Top = 0
+  Left = 355
+  Top = 196
   BorderStyle = bsToolWindow
   Caption = #1055#1083#1072#1085#1080#1088#1086#1074#1072#1085#1080#1077' '#1076#1077#1083
   ClientHeight = 406
@@ -11,6 +11,7 @@ object Form7: TForm7
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poDesigned
   OnCreate = FormCreate
   OnShow = FormShow
   TextHeight = 15
@@ -31,6 +32,8 @@ object Form7: TForm7
       Height = 406
       Align = alClient
       Columns = <>
+      ReadOnly = True
+      RowSelect = True
       TabOrder = 0
       ViewStyle = vsReport
       OnClick = ListView1Click

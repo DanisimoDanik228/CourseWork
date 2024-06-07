@@ -1,9 +1,9 @@
 object Form1: TForm1
-  Left = 500
-  Top = 164
-  Anchors = [akLeft, akTop, akRight, akBottom]
-  ClientHeight = 424
-  ClientWidth = 737
+  Left = 355
+  Top = 245
+  BorderStyle = bsSingle
+  ClientHeight = 397
+  ClientWidth = 741
   Color = clBtnFace
   Constraints.MinHeight = 370
   Constraints.MinWidth = 710
@@ -15,15 +15,16 @@ object Form1: TForm1
   KeyPreview = True
   Menu = MainMenu1
   Position = poDesigned
+  Visible = True
   WindowState = wsMaximized
   OnCreate = FormCreate
-  OnShow = FormShow
   TextHeight = 25
   object PaintBox1: TPaintBox
     Left = 0
-    Top = 91
-    Width = 505
-    Height = 266
+    Top = 85
+    Width = 741
+    Height = 312
+    Align = alClient
     Color = clSilver
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clGrayText
@@ -34,14 +35,16 @@ object Form1: TForm1
     ParentFont = False
     OnClick = PaintBox1Click
     OnMouseDown = PaintBox1MouseDown
-    OnMouseLeave = PaintBox1MouseLeave
     OnMouseMove = PaintBox1MouseMove
     OnPaint = PaintBox1Paint
+    ExplicitTop = 91
+    ExplicitWidth = 505
+    ExplicitHeight = 266
   end
   object Label1: TLabel
     Left = 0
     Top = 29
-    Width = 737
+    Width = 741
     Height = 56
     Align = alTop
     Alignment = taCenter
@@ -53,16 +56,26 @@ object Form1: TForm1
     Font.Name = 'SimSun-ExtB'
     Font.Style = []
     ParentFont = False
+    ExplicitWidth = 737
   end
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 737
+    Width = 741
     Height = 29
     Caption = 'ToolBar1'
+    Color = clBtnFace
+    DrawingStyle = dsGradient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -18
+    Font.Name = 'Segoe UI'
+    Font.Style = []
     Images = ImageList1
+    ParentColor = False
+    ParentFont = False
     TabOrder = 0
-    ExplicitWidth = 731
+    ExplicitTop = -6
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -100,11 +113,13 @@ object Form1: TForm1
       Left = 87
       Top = 0
       Action = Form2.ActionAddCulture
+      ImageIndex = 22
     end
     object ToolButton7: TToolButton
       Left = 110
       Top = 0
       Action = Form2.ActionAddGarden
+      ImageIndex = 1
     end
   end
   object MainMenu1: TMainMenu

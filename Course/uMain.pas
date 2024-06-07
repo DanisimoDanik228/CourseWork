@@ -10,7 +10,7 @@ uses
   Math, uGlobalData, uConstData, uMain_Logical,
   System.ImageList, Vcl.ImgList, System.Actions, Vcl.ActnList, Vcl.Grids,
   Vcl.Menus, Vcl.ToolWin, Vcl.ComCtrls, uAddNewCulture, uAddNewGarden,
-  uShowALLGardens, uDictionary, Messaging, uSP,uWorks;
+  uShowALLGardens, uDictionary, Messaging, uSP, uWorks;
 
 type
   TForm1 = class(TForm)
@@ -51,17 +51,15 @@ type
     procedure PaintSelectionCtrl(const Point: TPoint);
     procedure PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; x, y: integer);
-    procedure PaintBox1MouseLeave(Sender: TObject);
     procedure ActionSaveExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ActionShowAllExecute(Sender: TObject);
-    procedure FormShow(Sender: TObject);
     procedure ActionShowSPExecute(Sender: TObject);
     procedure ActionShowWorkExecute(Sender: TObject);
   private
     gardenlist: ptgarden;
     culturelist: ptculture;
-    workslist : ptworks;
+    workslist: ptworks;
 
     IsLBM: boolean;
 
@@ -72,7 +70,6 @@ type
 
     StartPointPrintGarde: TPoint;
 
-    function NegativeColor(const color: Tcolor): Tcolor;
   public
   end;
 
@@ -82,26 +79,6 @@ var
 implementation
 
 {$R *.dfm}
-
-function TForm1.NegativeColor(const color: Tcolor): Tcolor;
-var
-  R, G, B: BYTE;
-begin
-  randomize;
-  result := RGB((255 - GetRValue(color)) mod 256, (255 - GetGValue(color))
-    mod 256, (255 - GetBValue(color)) mod 256);
-
-  if GetRValue(result) > 128 then
-  begin
-    result := RGB(GetRValue(result) - 100, GetGValue(result),
-      GetBValue(result));
-  end
-  else
-  begin
-    result := RGB(GetRValue(result) + 100, GetGValue(result),
-      GetBValue(result));
-  end;
-end;
 
 procedure TForm1.PaintRect(const x, y: integer; const color: Tcolor;
   const brush: Tcolor);
@@ -233,7 +210,7 @@ end;
 
 procedure TForm1.ActionShowSPExecute(Sender: TObject);
 begin
-  uSP.Form6.Show;
+  uSP.Form6.MyShow;
 end;
 
 procedure TForm1.ActionShowWorkExecute(Sender: TObject);
@@ -279,6 +256,10 @@ procedure TForm1.FormCreate(Sender: TObject);
 var
   strTemp: string;
 begin
+
+  DoubleBuffered := True;
+
+
   new(gardenlist);
   new(culturelist);
   new(workslist);
@@ -298,12 +279,12 @@ begin
   PaintBox1.Canvas.CREATE;
   ScaleGarden := 70;
 
-  PaintBox1.Width := (1 + _GardenX) * (ScaleGarden + PenSize) + 10;
-  PaintBox1.Height := (1 + _GardenY) * (ScaleGarden + PenSize) +10;
+ // PaintBox1.Width := (1 + _GardenX) * (ScaleGarden + PenSize) + 10;
+ // PaintBox1.Height := (1 + _GardenY) * (ScaleGarden + PenSize) + 10;
 
   dictionaryColorToId := TMyDictionary<integer, Tcolor>.CREATE;
 
-  if false then
+  if 1 = 11 then
   begin
     _CreateFirstFileGarden;
     _CreateFirstFileCulture;
@@ -324,31 +305,15 @@ begin
     ShowMessage('ex : readfile');
   end;
 
-end;
-
-procedure TForm1.FormShow(Sender: TObject);
-begin
-  form2.createLists(culturelist, gardenlist);
-end;
-
-procedure TForm1.PaintBox1MouseLeave(Sender: TObject);
-begin
-
-  if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
-    if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
-      if not IsLBM then
-      begin
-        PaintRect(CurrPoint.x, CurrPoint.y,
-          IdentifyColor(GardenMas[CurrPoint.x][CurrPoint.y].CodGarden),
-          clSilver);
-      end;
-
+ // ToolBar1.DoubleBuffered := False;
 end;
 
 procedure TForm1.PaintBox1Click(Sender: TObject);
 begin
   if (StartPoint.x <> -1) and (StartPoint.y <> -1) then
   begin
+    form2.createLists(culturelist, gardenlist);
+
     if (abs(StartPoint.x - CurrPoint.x) <> 0) or
       (abs(StartPoint.y - CurrPoint.y) <> 0) then
     begin
@@ -374,13 +339,13 @@ end;
 
 procedure TForm1.PaintBox1MouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; x, y: integer);
+  var
+  Rect : TRect;
 begin
-  // StartPoint.x := -1;
-  // StartPoint.y := -1;
-
   if (StartPointPrintGarde.y < y) and (StartPointPrintGarde.x < x) then
-    if ((1 + _GardenX) * (ScaleGarden + PenSize) >= x) and
-      ((1 + _GardenY) * (ScaleGarden + PenSize) >= y) then
+    if (StartPointPrintGarde.x + (1 + _GardenX) * (ScaleGarden + PenSize) >= x)
+      and (StartPointPrintGarde.y + (1 + _GardenY) * (ScaleGarden + PenSize)
+      >= y) then
       if (Button = mbleft) then
       begin
         IsLBM := True;
@@ -397,63 +362,47 @@ procedure TForm1.PaintBox1MouseMove(Sender: TObject; Shift: TShiftState;
 var
   newPoint: TPoint;
 begin
-  if (StartPointPrintGarde.y < y) and (StartPointPrintGarde.x < x) then
+
+  if (StartPointPrintGarde.x + (1 + _GardenX) * (ScaleGarden) >= x) and
+    (StartPointPrintGarde.y + (1 + _GardenY) * (ScaleGarden) >= y) and
+    (StartPointPrintGarde.y < y) and (StartPointPrintGarde.x < x) then
   begin
-
-    if ((1 + _GardenX) * (ScaleGarden + PenSize) >= x) and
-      ((1 + _GardenY) * (ScaleGarden + PenSize) >= y) then
+    if (IsLBM) then
     begin
+      CurrPoint.x := (x - StartPointPrintGarde.x) div ScaleGarden;
+      CurrPoint.y := (y - StartPointPrintGarde.y) div ScaleGarden;
 
-      if (IsLBM) then
-      begin
-        CurrPoint.x := (x - StartPointPrintGarde.x) div ScaleGarden;
-        CurrPoint.y := (y - StartPointPrintGarde.y) div ScaleGarden;
-
-        if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
-          if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
-          begin
-            PaintSelectionCtrl(CurrPoint);
-          end;
-      end
-      else
-      begin
-
-        newPoint.x := (x - StartPointPrintGarde.x) div (ScaleGarden);
-        newPoint.y := (y - StartPointPrintGarde.y) div (ScaleGarden);
-        if (newPoint.x <> CurrPoint.x) or (newPoint.y <> CurrPoint.y) then
+      if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
+        if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
         begin
-          if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
-            if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
-            begin
-              PaintRect(CurrPoint.x, CurrPoint.y,
-                IdentifyColor(GardenMas[CurrPoint.x][CurrPoint.y].CodGarden),
-                clSilver);
-            end;
-
-          CurrPoint := newPoint;
-
-          if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
-            if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
-            begin
-              PaintSelection(CurrPoint);
-            end;
-
+          PaintSelectionCtrl(CurrPoint);
         end;
-      end;
     end
     else
     begin
-      if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
-        if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
-          if not IsLBM then
+
+      newPoint.x := (x - StartPointPrintGarde.x) div (ScaleGarden);
+      newPoint.y := (y - StartPointPrintGarde.y) div (ScaleGarden);
+
+      if (newPoint.x <> CurrPoint.x) or (newPoint.y <> CurrPoint.y) then
+      begin
+        if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
+          if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
           begin
             PaintRect(CurrPoint.x, CurrPoint.y,
               IdentifyColor(GardenMas[CurrPoint.x][CurrPoint.y].CodGarden),
               clSilver);
           end;
 
-      CurrPoint.x := -1;
-      CurrPoint.y := -1;
+        CurrPoint := newPoint;
+
+        if (CurrPoint.y <= _GardenY) and (CurrPoint.x <= _GardenX) then
+          if (CurrPoint.y >= 0) and (CurrPoint.x >= 0) then
+          begin
+            PaintSelection(CurrPoint);
+          end;
+
+      end;
     end;
   end
   else
@@ -466,6 +415,7 @@ begin
             IdentifyColor(GardenMas[CurrPoint.x][CurrPoint.y].CodGarden),
             clSilver);
         end;
+
     CurrPoint.x := -1;
     CurrPoint.y := -1;
   end;

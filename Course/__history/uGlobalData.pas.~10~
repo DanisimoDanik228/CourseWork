@@ -1,0 +1,247 @@
+unit uGlobalData;
+
+interface
+
+uses
+  Types, Graphics, sysUtils,
+  Vcl.Dialogs, uDictionary;
+
+const
+  textSP = 'Программное средство "Мой Сад"' + #13#10 +
+    'предназначено для облегчениия' + #13#10 + 'работ садовода. В функционал ' +
+    #13#10 + 'входит редактирование грядок/культур,' + #13#10 +
+    'а так же удобный просмотр культур' + #13#10 + 'на грядках';
+
+  PenSize = 2;
+  FileCulture = 'culture.cul';
+  FileGarden = 'garden.cul';
+  FileColor = 'colorsGarden.cul';
+  NameFileWorks = 'worksDeal.cul';
+
+  UserFileGarden = 'userGarden.garden';
+
+  NameMainForm = 'Мой Сад';
+
+  _GardenX = 20;
+  _GardenY = 10;
+
+type
+
+  worksRecord = record
+    Name: string[255];
+    Description: string[255];
+    Date: string[255];
+  end;
+  ptworks = ^works;
+
+  works = record
+    work: worksRecord;
+    next: ptworks;
+  end;
+
+
+
+  Tstring = string[50];
+
+  TMyDate = record
+    Year: integer;
+    Month: integer;
+    Days: integer;
+  end;
+
+  Ptculture = ^cultureRecord;
+
+  cultureListInfo = record
+    Name: string[50];
+    Time: TMyDate;
+    cod: integer;
+  end;
+
+  cultureRecord = record
+    culture: cultureListInfo;
+    Next: Ptculture;
+  end;
+
+  PtGarden = ^GardenRecord;
+
+  TGarden = record
+    CodGarden: integer;
+    Name: string[50];
+  end;
+
+  GardenRecord = record
+    garden: TGarden;
+    Next: PtGarden;
+  end;
+
+  TGardenCell = record
+    CodGarden: integer;
+    Сulture: cultureListInfo;
+  end;
+
+  RecordDictionary = record
+    Color: TColor;
+    corGarden: integer;
+  end;
+
+  TgardenMas = array [0 .. _GardenX] of array [0 .. _GardenY] of TGardenCell;
+
+var
+  dictionaryColorToId: TMyDictionary<integer, TColor>;
+  GardenMas: TgardenMas;
+
+  currMaxIdCulture: integer;
+  currMaxIdGarden: integer;
+
+function IdentifyColor(const cod: integer): TColor;
+function ConvertStringToDate(const dateStr: string; var Date: TMyDate): boolean;
+function ConvertDateToString(const dateStr: TMyDate): string;
+function GetIdGarden(const Name: string; list: PtGarden): integer;
+ procedure PrintGarden(dictionaryColorToId: TMyDictionary<integer, TColor>;
+ list: PtGarden);
+ procedure PrintDictionary;
+ procedure PrintCulture(list: Ptculture);
+
+    function NegativeColor(const color: Tcolor): Tcolor;
+implementation
+ function NegativeColor(const color: Tcolor): Tcolor;
+var
+  R, G, B: BYTE;
+begin
+  randomize;
+  result := RGB((255 - GetRValue(color)) mod 256, (255 - GetGValue(color))
+    mod 256, (255 - GetBValue(color)) mod 256);
+
+  if GetRValue(result) > 128 then
+  begin
+    result := RGB(GetRValue(result) - 100, GetGValue(result),
+      GetBValue(result));
+  end
+  else
+  begin
+    result := RGB(GetRValue(result) + 100, GetGValue(result),
+      GetBValue(result));
+  end;
+end
+function GetIdGarden(const Name: string; list: PtGarden): integer;
+begin
+  list := list.Next;
+  result := -1;
+  try
+    while list <> nil do
+    begin
+      if list.garden.Name = Name then
+      begin
+        result := list.garden.CodGarden;
+        break;
+      end;
+      list := list.Next;
+    end;
+
+  except
+    ShowMessage('Такого имени в грядках не существует');
+  end;
+
+  if result = -1 then
+  begin
+
+    ShowMessage('Такого имени в грядках не существует');
+  end;
+end;
+
+procedure PrintDictionary;
+var
+  str: string;
+begin
+  str := 'Dictionary' + #13#10;
+  for var temp in dictionaryColorToId.GetAllItems do
+  begin
+    str := str + #13#10 + inttostr(temp.Key) + '  |  ' +
+      ColorToString(temp.Value);
+  end;
+
+  ShowMessage(str);
+end;
+
+procedure PrintGarden(dictionaryColorToId: TMyDictionary<integer, TColor>;
+  list: PtGarden);
+var
+  str: string;
+begin
+  str := 'Garden' + #13#10;
+  list := list.Next;
+  while list <> nil do
+  begin
+    str := str + #13#10 + inttostr(list.garden.CodGarden) + '  |  ' +
+      list.garden.Name + '  --> ';
+    if dictionaryColorToId.ContainsKey(list.garden.CodGarden) then
+    begin
+      str := str + ColorToString(dictionaryColorToId[list.garden.CodGarden]);
+    end
+    else
+    begin
+      str := str + 'error';
+    end;
+
+    list := list.Next;
+  end;
+  ShowMessage(str);
+end;
+
+procedure PrintCulture(list: Ptculture);
+var
+  str: string;
+begin
+  str := 'culture' + #13#10;
+  list := list.Next;
+
+  while list <> nil do
+  begin
+    str := str + #13#10 + inttostr(list.culture.cod) + '  |  ' +
+      list.culture.Name + '  |  ' + ConvertDateToString(list.culture.Time);
+    list := list.Next;
+  end;
+  ShowMessage(str);
+end;
+
+function IdentifyColor(const cod: integer): TColor;
+begin
+  result := dictionaryColorToId[cod];
+end;
+
+function ConvertStringToDate(const dateStr: string; var Date: TMyDate): boolean;
+begin
+  ConvertStringToDate := true;
+
+  try
+    Date.Days := StrToInt((dateStr[1] + dateStr[2]));
+    Date.Month := StrToInt((dateStr[4] + dateStr[5]));
+    Date.Year := StrToInt((dateStr[7]));
+  except
+    ConvertStringToDate := false;
+  end;
+
+  if (Length(dateStr) <> 7) or (dateStr[3] <> ':') or (dateStr[6] <> ':') then
+    ConvertStringToDate := false;
+
+end;
+
+function ConvertDateToString(const dateStr: TMyDate): string;
+begin
+  result := inttostr(dateStr.Days);
+  if dateStr.Days < 10 then
+  begin
+    result := '0' + result;
+  end;
+
+  result := result + ':';
+
+  if dateStr.Month < 10 then
+  begin
+    result := result + '0';
+  end;
+  result := result + inttostr(dateStr.Month) + ':' + inttostr(dateStr.Year);
+
+end;
+
+end.

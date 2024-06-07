@@ -24,7 +24,7 @@ type
   private
     masNames: array of string;
     res: TModalResult;
-    function IsValidInputData(const str1, str2, str3: string): boolean;
+    function IsValidInputData(const str1: string): boolean;
     { Private declarations }
   public
     function ShowForEditing(var Task: worksRecord; ListView1: TLISTVIEW)
@@ -62,9 +62,9 @@ begin
   result := res;
 end;
 
-function TForm8.IsValidInputData(const str1, str2, str3: string): boolean;
+function TForm8.IsValidInputData(const str1: string): boolean;
 begin
- if '' = EditName.Text then
+ if '' = str1 then
     begin
       result := false;
       exit;
@@ -72,7 +72,7 @@ begin
 
   for var item in masNames do
   begin
-    if   item  = '"' + EditName.Text + '"' then
+    if   item  = '"' + str1 + '"' then
     begin
       result := false;
       exit;
@@ -87,11 +87,9 @@ begin
   Close();
 end;
 
-
-
 procedure TForm8.ButtonOkClick(Sender: TObject);
 begin
-  if IsValidInputData(EditName.Text, Editdate.Text, EditDesc.Text) then
+  if IsValidInputData(EditName.Text) then
   begin
     res := mrOk;
     Close();
@@ -99,6 +97,7 @@ begin
   else
   begin
       MessageBox(Application.Handle, 'Неверно введённое имя '+#13#10 + '(название не может быть пустым)'+#13#10 + '(название должно быть уникальным)', 'Ошибка ввода', MB_OK);
+  Res := mrnone;
   end;
 end;
 
